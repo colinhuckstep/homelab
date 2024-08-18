@@ -24,14 +24,14 @@ all:
 
 portainer_admin:
   hosts:
-    amy:
+    node1:
 
 portainer_agents:
   hosts:
-    thedoctor:
-    rory:
-    amy:
+    node1:
+    node2:
+    node3:
 
 power_panel:
   hosts:
-    thedoctor:
+    node1:
