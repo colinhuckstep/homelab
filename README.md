@@ -1,5 +1,5 @@
 # Description
-This is the Ansible Playbooks for building/rebuilding/adding a node to my homelab. The new-host.yml playbook will patch all nodes to latest then install Docker, Tailscale, ControlD, PowerPanel (On the node controlling the UPS), Staship Shell, and Portainer Admin and Edge Agents.
+This is the Ansible Playbooks for building/rebuilding/adding a node to my homelab. The new-host.yml playbook will patch all nodes to latest then install Docker, Tailscale, ControlD, PowerPanel (On the node controlling the UPS), Staship Shell, and Portainer Admin and Edge Agents. Any necessary pre-reqs will be installed along the way.
 
 ## Assumptions/Pre-sreqs
 - A workstation with Ansible Engine installed and a basic understanding of using Ansible
