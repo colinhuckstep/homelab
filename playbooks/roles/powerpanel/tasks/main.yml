@@ -9,12 +9,11 @@
     - name: Install PowerPanel
       ansible.builtin.apt:
         deb: /tmp/PPL.deb
+      notify: Reboot
     - name: Cleanup Installer
       ansible.builtin.file:
         path: /tmp/PPL.deb
         state: absent
-    - name: Reboot
-      ansible.builtin.reboot:
     - name: Cloud Config # noqa no-changed-when
       ansible.builtin.command:
         cmd: "pwrstat -cloud -active on -account {{ secret_power_panel_user }} -password {{ secret_power_panel_pass }}"

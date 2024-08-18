@@ -8,7 +8,6 @@
     - ansible_ssh_password: "{{ secret_temp_password }}"
     - ansible_python_interpreter: "/usr/bin/python3"
     - system_timezone: "America/Indiana/Indianapolis"
-  tasks:
   roles:
     - pre-reqs
     - patch
@@ -16,13 +15,6 @@
     - starship
     - controld
     - docker
-
-  handlers:
-    - name: Restart sshd
-      become: true
-      ansible.builtin.service:
-        name: sshd
-        state: restarted
 
 - name: Install Power Panel
   hosts: power_panel
