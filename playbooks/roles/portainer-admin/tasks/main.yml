@@ -1,36 +1,52 @@
-- name: Portainer Admin Install
+- name: Create Data Folder
   become: true
-  block:
-    - name: Create Data Folder
-      ansible.builtin.file:
-        path: "/container-vols/portainer"
-        state: directory
-        owner: root
-        group: root
-        mode: "0775"
+  ansible.builtin.file:
+    path: "/container-vols/portainer"
+    state: directory
+    owner: root
+    group: root
+    mode: "0775"
 
-    - name: Copy Compose File
-      ansible.builtin.template:
-        src: admin.j2
-        dest: /container-vols/portainer/docker-compose.yml
-        mode: "0660"
+- name: Copy Compose File
+  become: true
+  ansible.builtin.template:
+    src: admin.j2
+    dest: /container-vols/portainer/docker-compose.yml
+    mode: "0660"
 
-    - name: Deploy Admin Stack
-      community.docker.docker_compose_v2:
-        project_src: /container-vols/portainer/
-        state: present
+- name: Deploy Admin Stack
+  become: true
+  community.docker.docker_compose_v2:
+    project_src: /container-vols/portainer/
+    state: present
 
-    - name: Get Admin JWT Token
-      ansible.builtin.uri:
-        url: "https://portainer.{{ secret_base_domain }}/api/auth"
-        method: POST
-        body_format: json
-        body:
-          username: "{{ secret_portainer_admin_user }}"
-          password: "{{ secret_portainer_admin_pass }}"
-      register: token_response
-    - name: Set the Bearer Token
-      ansible.builtin.set_fact:
-        portainer_auth_token: "{{ token_response['json']['jwt'] }}"
+- name: Get Admin JWT Token
+  ansible.builtin.uri:
+    url: "https://portainer.{{ secret_base_domain }}/api/auth"
+    method: POST
+    body_format: json
+    body:
+      username: "{{ secret_portainer_admin_user }}"
+      password: "{{ secret_portainer_admin_pass }}"
+  register: portainer_auth_token
 
-  # - name: Get Auto Registration Token
+- name: Apply Config
+  ansible.builtin.uri:
+    url: "https://portainer.{{ secret_base_domain }}/api/settings"
+    headers:
+      Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
+    body_format: json
+    body: "{{ lookup('ansible.builtin.file', '~/repos/secrets/portainer/config.json') }}"
+    method: "PUT"
+  register: config_set
+  changed_when: config_set.status == 200
+
+- name: Create Endpoint Group
+  ansible.builtin.uri:
+    url: "https://portainer.{{ secret_base_domain }}/api/endpoint_groups"
+    headers:
+      Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
+    body_format: json
+    body:
+      name: "{{ secret_portainer_group }}"
+    method: "POST"
