@@ -16,8 +16,6 @@
     - controld
     - docker
 
-  
-
 - name: Install Power Panel
   hosts: power_panel
   gather_facts: false
