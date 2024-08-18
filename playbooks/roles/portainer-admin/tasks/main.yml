@@ -1,0 +1,36 @@
+- name: Portainer Admin Install
+  become: true
+  block:
+    - name: Create Data Folder
+      ansible.builtin.file:
+        path: "/container-vols/portainer"
+        state: directory
+        owner: root
+        group: root
+        mode: "0775"
+
+    - name: Copy Compose File
+      ansible.builtin.template:
+        src: admin.j2
+        dest: /container-vols/portainer/docker-compose.yml
+        mode: "0660"
+
+    - name: Deploy Admin Stack
+      community.docker.docker_compose_v2:
+        project_src: /container-vols/portainer/
+        state: present
+
+    - name: Get Admin JWT Token
+      ansible.builtin.uri:
+        url: "https://portainer.{{ secret_base_domain }}/api/auth"
+        method: POST
+        body_format: json
+        body:
+          username: "{{ secret_portainer_admin_user }}"
+          password: "{{ secret_portainer_admin_pass }}"
+      register: token_response
+    - name: Set the Bearer Token
+      ansible.builtin.set_fact:
+        portainer_auth_token: "{{ token_response['json']['jwt'] }}"
+
+  # - name: Get Auto Registration Token

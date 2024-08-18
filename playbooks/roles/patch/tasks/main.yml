@@ -1,0 +1,15 @@
+- name: Patch All
+  become: true
+  block:
+    - name: Patch All Packages # noqa package-latest
+      ansible.builtin.apt:
+        name: "*"
+        state: latest
+        update_cache: true
+    - name: Check if reboot required
+      ansible.builtin.stat:
+        path: /var/run/reboot-required
+      register: reboot_required
+    - name: Reboot if required
+      ansible.builtin.reboot:
+      when: reboot_required.stat.exists

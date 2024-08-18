@@ -1,0 +1,42 @@
+- name: Download Tailscale installation script
+  ansible.builtin.get_url:
+    url: https://tailscale.com/install.sh
+    dest: /tmp/tailscale.sh
+    mode: '0755'
+- name: Install Tailscale
+  become: true
+  ansible.builtin.command: /tmp/tailscale.sh
+  args:
+    creates: /usr/bin/tailscale
+  register: tailscale_res
+- name: Configure Tailscale # noqa no-handler
+  become: true
+  when: tailscale_res.changed
+  block:
+    - name: Enable Tailscale # noqa no-changed-when
+      ansible.builtin.shell: |
+        tailscale up \
+        --accept-routes=false \
+        --advertise-exit-node \
+        --reset \
+        --auth-key {{ secret_tailscale_auth_key }} \
+        --advertise-routes 172.16.0.0/24
+    - name: Create Tailscale Network Policy File
+      ansible.builtin.file:
+        path: /etc/sysctl.d/99-tailscale.conf
+        state: touch
+        mode: "0644"
+    - name: Enable Tailscale IPv4 Routing
+      ansible.posix.sysctl:
+        name: net.ipv4.ip_forward
+        value: '1'
+        state: present
+        sysctl_file: /etc/sysctl.d/99-tailscale.conf
+        reload: true
+    - name: Enable Tailscale IPv6 Routing
+      ansible.posix.sysctl:
+        name: net.ipv6.conf.all.forwarding
+        value: '1'
+        state: present
+        sysctl_file: /etc/sysctl.d/99-tailscale.conf
+        reload: true

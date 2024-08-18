@@ -1,0 +1,43 @@
+---
+- name: Basic Setup
+  hosts: all
+  gather_facts: false
+  vars_files:
+    - ~/repos/secrets/secrets.yml
+  vars:
+    - ansible_ssh_password: "{{ secret_temp_password }}"
+    - ansible_python_interpreter: "/usr/bin/python3"
+    - system_timezone: "America/Indiana/Indianapolis"
+  tasks:
+  roles:
+    - pre-reqs
+    - patch
+    - tailscale
+    - starship
+    - controld
+    - docker
+
+  handlers:
+    - name: Restart sshd
+      become: true
+      ansible.builtin.service:
+        name: sshd
+        state: restarted
+
+- name: Install Power Panel
+  hosts: power_panel
+  gather_facts: false
+  vars_files:
+    - ~/repos/secrets/secrets.yml
+  vars:
+    - powerpanel_version: 1.4.1
+  roles:
+    - powerpanel
+
+- name: Portainer Admin Install
+  hosts: portainer_admin
+  vars_files:
+    - ~/repos/secrets/secrets.yml
+  gather_facts: false
+  roles:
+    - portainer-admin

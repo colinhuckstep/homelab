@@ -1,0 +1,15 @@
+- name: Get Starship Install
+  ansible.builtin.get_url:
+    url: https://starship.rs/install.sh
+    dest: /tmp/starship.sh
+    mode: "0777"
+- name: Install Starship
+  become: true
+  ansible.builtin.command:
+    cmd: /tmp/starship.sh -f
+    creates: /usr/local/bin/starship
+- name: Install .bashrc
+  ansible.builtin.copy:
+    src: "/home/{{ ansible_user }}/repos/secrets/.bashrc"
+    dest: "/home/{{ ansible_user }}/.bashrc"
+    mode: "0600"
