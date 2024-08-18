@@ -1,0 +1,38 @@
+###
+# @name getBearerToken
+
+POST {{ portainer_host }}/api/auth
+Content-Type: application/json
+{
+    "username": "{{ portainer_user }}",
+    "password": "{{ portainer_pass }}"
+}
+
+###
+# @name getConfig
+# @ref getBearerToken
+
+GET {{ portainer_host }}/api/settings
+Authorization: Bearer {{ getBearerToken.jwt }}
+
+###
+# @name generateKey
+# @ref getBearerToken
+
+POST {{ portainer_host }}/api/endpoints/edge/generate-key
+Authorization: Bearer {{ getBearerToken.jwt }}
+
+
+###
+# @name approveHost
+# @ref getBearerToken
+POST {{ portainer_host }}/api/endpoints/{{ portainer_agent }}/edge/trust
+Authorization: Bearer {{ getBearerToken.jwt }}
+
+
+###
+# @name getEndpoints
+# @ref getBearerToken
+
+GET {{ portainer_host }}/api/endpoints
+Authorization: Bearer {{ getBearerToken.jwt }}

@@ -33,3 +33,11 @@
   gather_facts: false
   roles:
     - portainer-admin
+
+- name: Portainer Edge Agent Install
+  hosts: portainer_agents
+  gather_facts: true
+  vars_files:
+    - ~/repos/secrets/secrets.yml
+  roles:
+    - portainer-agent
