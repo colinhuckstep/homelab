@@ -12,7 +12,7 @@
   ansible.builtin.template:
     src: admin.j2
     dest: /container-vols/portainer/docker-compose.yml
-    mode: "0660"
+    mode: "0664"
 
 - name: Deploy Admin Stack
   become: true
@@ -50,3 +50,46 @@
     body:
       name: "{{ secret_portainer_group }}"
     method: "POST"
+
+- name: Create Docker Creds
+  ansible.builtin.uri:
+    url: "https://portainer.{{ secret_base_domain }}/api/registries"
+    headers:
+      Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
+    body_format: json
+    body:
+      name: "dockerhub"
+      type: 6
+      url: docker.io
+      username: "{{ secret_portainer_dockerhub_user }}"
+      password: "{{ secret_portainer_dockerhub_pat }}"
+      authentication: true
+    method: "POST"
+  register: dh_create
+  failed_when:
+    - dh_create.status != 200
+    - dh_create.status != 409
+
+- name: Create Edge Groups
+  ansible.builtin.include_tasks: create-edge-group.yml
+  with_items:
+    - "omada"
+    - "rclone"
+    - "ai"
+
+- name: Create GitHub Creds
+  ansible.builtin.uri:
+    url: "https://portainer.{{ secret_base_domain }}/api/users/1/gitcredentials"
+    headers:
+      Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
+    body_format: json
+    body:
+      name: "gh-{{ secret_gh_user }}"
+      username: "{{ secret_gh_user }}"
+      password: "{{ secret_gh_token }}"
+    method: "POST"
+  register: gh_create
+  failed_when:
+    - gh_create.status != 201
+    - (gh_create.status == 400) and (gh_create.json['message'] != 'Git credential name already exists')
+    

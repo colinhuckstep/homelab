@@ -26,7 +26,7 @@ Authorization: Bearer {{ getBearerToken.jwt }}
 ###
 # @name approveHost
 # @ref getBearerToken
-POST {{ portainer_host }}/api/endpoints/{{ portainer_agent }}/edge/trust
+POST {{ portainer_host }}/api/endpoints/903/edge/trust
 Authorization: Bearer {{ getBearerToken.jwt }}
 
 
@@ -35,4 +35,20 @@ Authorization: Bearer {{ getBearerToken.jwt }}
 # @ref getBearerToken
 
 GET {{ portainer_host }}/api/endpoints
+Authorization: Bearer {{ getBearerToken.jwt }}
+
+###/
+# @name createEndpoint
+# @ref getBearerToken
+
+POST {{ portainer_host }}/api/endpoints
+Authorization: Bearer {{ getBearerToken.jwt }}
+Content-Type: application/x-www-form-urlencoded
+Name=amy&EndpointCreationType=4&GroupID=2
+
+###
+# @name getRegistries
+# @ref getBearerToken
+
+GET {{ portainer_host }}/api/registries
 Authorization: Bearer {{ getBearerToken.jwt }}
