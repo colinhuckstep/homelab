@@ -52,3 +52,25 @@ Name=amy&EndpointCreationType=4&GroupID=2
 
 GET {{ portainer_host }}/api/registries
 Authorization: Bearer {{ getBearerToken.jwt }}
+
+###
+# @name getGHCreds
+# @ref getBearerToken
+
+GET {{ portainer_host }}/api/users/1/gitcredentials
+Authorization: Bearer {{ getBearerToken.jwt }}
+
+
+###
+# @name deleteGHCreds
+# @ref getBearerToken
+
+DELETE {{ portainer_host }}/api/users/1/gitcredentials/1
+Authorization: Bearer {{ getBearerToken.jwt }}
+
+###
+# @name deleteDHCreds
+# @ref getBearerToken
+
+DELETE {{ portainer_host }}/api/registries/2
+Authorization: Bearer {{ getBearerToken.jwt }}

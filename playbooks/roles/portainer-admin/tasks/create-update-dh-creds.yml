@@ -1,0 +1,49 @@
+- name: Set dh_creds_exist
+  ansible.builtin.set_fact:
+    dh_creds_exist: false
+
+- name: Get Existing Registry Creds
+  ansible.builtin.uri:
+    url: "https://portainer.{{ secret_base_domain }}/api/registries"
+    headers:
+      Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
+    method: "GET"
+  register: dh_existing_creds
+
+- name: Check for DockerHub Creds
+  ansible.builtin.set_fact:
+    dh_creds_id: "{{ dh_existing_creds.json | json_query(query) }}"
+  vars:
+    query: "[?Name=='dockerhub'].Id"
+
+- name: Update DockerHub Creds
+  when: dh_creds_id != []
+  ansible.builtin.uri:
+    url: "https://portainer.{{ secret_base_domain }}/api/registries/{{ dh_creds_id[0] }}"
+    headers:
+      Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
+    body_format: json
+    body:
+      name: "dockerhub"
+      type: 6
+      url: docker.io
+      username: "{{ secret_portainer_dockerhub_user }}"
+      password: "{{ secret_portainer_dockerhub_pat }}"
+      authentication: true
+    method: "PUT"
+
+- name: Create Docker Creds
+  when: dh_creds_id == []
+  ansible.builtin.uri:
+    url: "https://portainer.{{ secret_base_domain }}/api/registries"
+    headers:
+      Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
+    body_format: json
+    body:
+      name: "dockerhub"
+      type: 6
+      url: docker.io
+      username: "{{ secret_portainer_dockerhub_user }}"
+      password: "{{ secret_portainer_dockerhub_pat }}"
+      authentication: true
+    method: "POST"

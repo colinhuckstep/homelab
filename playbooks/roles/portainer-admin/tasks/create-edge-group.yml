@@ -1,13 +1,28 @@
-- name: "Create Edge Group {{ item }}"
+- name: Set eg_exists
+  ansible.builtin.set_fact:
+    eg_exists: false
+
+- name: Get Existing Edge Groups
+  ansible.builtin.uri:
+    url: "https://portainer.{{ secret_base_domain }}/api/edge_groups"
+    headers:
+      Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
+    method: "GET"
+  register: eg_existing_groups
+
+- name: Check for Edge Group
+  ansible.builtin.set_fact:
+    eg_id: "{{ eg_existing_groups.json | json_query(query) }}"
+  vars:
+    query: "[?Name=='{{ group }}'].Id"
+
+- name: "Create Edge Group {{ group }}"
+  when: eg_id == []
   ansible.builtin.uri:
     url: "https://portainer.{{ secret_base_domain }}/api/edge_groups"
     headers:
       Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
     body_format: json
     body:
-      name: "{{ item }}"
+      name: "{{ group }}"
     method: "POST"
-  register: eg_create
-  failed_when:
-    - eg_create.status != 200
-    - (eg_create.status == 400) and (eg_create.json['message'] != 'Edge group name must be unique')

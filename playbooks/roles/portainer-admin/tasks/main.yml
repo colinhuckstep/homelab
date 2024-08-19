@@ -31,65 +31,22 @@
   register: portainer_auth_token
 
 - name: Apply Config
-  ansible.builtin.uri:
-    url: "https://portainer.{{ secret_base_domain }}/api/settings"
-    headers:
-      Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
-    body_format: json
-    body: "{{ lookup('ansible.builtin.file', '~/repos/secrets/portainer/config.json') }}"
-    method: "PUT"
-  register: config_set
-  changed_when: config_set.status == 200
+  ansible.builtin.include_tasks: apply-config.yml
 
 - name: Create Endpoint Group
-  ansible.builtin.uri:
-    url: "https://portainer.{{ secret_base_domain }}/api/endpoint_groups"
-    headers:
-      Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
-    body_format: json
-    body:
-      name: "{{ secret_portainer_group }}"
-    method: "POST"
-
-- name: Create Docker Creds
-  ansible.builtin.uri:
-    url: "https://portainer.{{ secret_base_domain }}/api/registries"
-    headers:
-      Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
-    body_format: json
-    body:
-      name: "dockerhub"
-      type: 6
-      url: docker.io
-      username: "{{ secret_portainer_dockerhub_user }}"
-      password: "{{ secret_portainer_dockerhub_pat }}"
-      authentication: true
-    method: "POST"
-  register: dh_create
-  failed_when:
-    - dh_create.status != 200
-    - dh_create.status != 409
+  ansible.builtin.include_tasks: create-endpoint-group.yml
 
 - name: Create Edge Groups
   ansible.builtin.include_tasks: create-edge-group.yml
-  with_items:
-    - "omada"
-    - "rclone"
-    - "ai"
+  loop_control:
+    loop_var: group
+  loop:
+    - omada
+    - rclone
+    - ai
 
-- name: Create GitHub Creds
-  ansible.builtin.uri:
-    url: "https://portainer.{{ secret_base_domain }}/api/users/1/gitcredentials"
-    headers:
-      Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
-    body_format: json
-    body:
-      name: "gh-{{ secret_gh_user }}"
-      username: "{{ secret_gh_user }}"
-      password: "{{ secret_gh_token }}"
-    method: "POST"
-  register: gh_create
-  failed_when:
-    - gh_create.status != 201
-    - (gh_create.status == 400) and (gh_create.json['message'] != 'Git credential name already exists')
-    
+- name: Create/Update DockerHub Creds
+  ansible.builtin.include_tasks: create-update-dh-creds.yml
+
+- name: Create/Update GitHub Creds
+  ansible.builtin.include_tasks: create-update-gh-creds.yml
