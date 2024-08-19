@@ -1,21 +1,3 @@
-- name: Set dh_creds_exist
-  ansible.builtin.set_fact:
-    dh_creds_exist: false
-
-- name: Get Existing Registry Creds
-  ansible.builtin.uri:
-    url: "https://portainer.{{ secret_base_domain }}/api/registries"
-    headers:
-      Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
-    method: "GET"
-  register: dh_existing_creds
-
-- name: Check for DockerHub Creds
-  ansible.builtin.set_fact:
-    dh_creds_id: "{{ dh_existing_creds.json | json_query(query) }}"
-  vars:
-    query: "[?Name=='dockerhub'].Id"
-
 - name: Update DockerHub Creds
   when: dh_creds_id != []
   ansible.builtin.uri:

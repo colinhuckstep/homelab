@@ -74,3 +74,11 @@ Authorization: Bearer {{ getBearerToken.jwt }}
 
 DELETE {{ portainer_host }}/api/registries/2
 Authorization: Bearer {{ getBearerToken.jwt }}
+
+
+###
+# @name getEdgeStacks
+# @ref getBearerToken
+
+GET {{ portainer_host }}/api/edge_stacks
+Authorization: Bearer {{ getBearerToken.jwt }}
