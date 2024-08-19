@@ -15,6 +15,6 @@ This is the Ansible Playbooks for building/rebuilding/adding a node to my homela
 An example inventory file is provided at inventories/example.yml It is non-functional and would need updated with the current node names, IPs, user, ControlD resolver IDs.
 
 ## Portainer
-Portainer Admin Console is installed on the portainer_admin node listed in the inventory. It is not setup to expose the local docker instance.
+Portainer Admin Console is installed on the portainer_admin node listed in the inventory. It is not setup to expose the local docker instance. Portainer Config JSON is stored in the secrets repo.
 
 Portainer Edge Agent is configured to run on all nodes listed in portainer_agents group in the inventory. Edge Agent was chosen because of the ability to schedule jobs when using the Edge Compute features in portainer.
