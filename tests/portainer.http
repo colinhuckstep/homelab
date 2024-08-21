@@ -82,3 +82,10 @@ Authorization: Bearer {{ getBearerToken.jwt }}
 
 GET {{ portainer_host }}/api/edge_stacks
 Authorization: Bearer {{ getBearerToken.jwt }}
+
+###
+# @name getAgent
+# @ref getBearerToken
+
+GET {{ portainer_host }}/api/endpoints/907
+Authorization: Bearer {{ getBearerToken.jwt }}

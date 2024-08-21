@@ -1,24 +1,24 @@
-# - name: Create Data Folder
-#   become: true
-#   ansible.builtin.file:
-#     path: "/container-vols/portainer"
-#     state: directory
-#     owner: root
-#     group: root
-#     mode: "0775"
+- name: Create Data Folder
+  become: true
+  ansible.builtin.file:
+    path: "/container-vols/portainer"
+    state: directory
+    owner: root
+    group: root
+    mode: "0775"
 
-# - name: Copy Compose File
-#   become: true
-#   ansible.builtin.template:
-#     src: admin.j2
-#     dest: /container-vols/portainer/docker-compose.yml
-#     mode: "0664"
+- name: Copy Compose File
+  become: true
+  ansible.builtin.template:
+    src: admin.j2
+    dest: /container-vols/portainer/docker-compose.yml
+    mode: "0664"
 
-# - name: Deploy Admin Stack
-#   become: true
-#   community.docker.docker_compose_v2:
-#     project_src: /container-vols/portainer/
-#     state: present
+- name: Deploy Admin Stack
+  become: true
+  community.docker.docker_compose_v2:
+    project_src: /container-vols/portainer/
+    state: present
 
 - name: Get Admin JWT Token
   ansible.builtin.uri:
@@ -30,29 +30,32 @@
       password: "{{ secret_portainer_admin_pass }}"
   register: portainer_auth_token
 
-# - name: Apply Config
-#   ansible.builtin.include_tasks: apply-config.yml
+- name: Apply Config
+  ansible.builtin.include_tasks: apply-config.yml
 
-# - name: Get Existing Objects
-#   ansible.builtin.include_tasks: get-object-ids.yml
+- name: Apply Backup Settings
+  ansible.builtin.include_tasks: apply-backup-config.yml
 
-# - name: Create Endpoint Group
-#   ansible.builtin.include_tasks: create-endpoint-group.yml
+- name: Get Existing Objects
+  ansible.builtin.include_tasks: get-object-ids.yml
 
-# - name: Create Edge Groups
-#   ansible.builtin.include_tasks: create-edge-group.yml
-#   loop_control:
-#     loop_var: group
-#   loop:
-#     - omada
-#     - rclone
-#     - ai
+- name: Create Endpoint Group
+  ansible.builtin.include_tasks: create-endpoint-group.yml
 
-# - name: Create/Update DockerHub Creds
-#   ansible.builtin.include_tasks: create-update-dh-creds.yml
+- name: Create Edge Groups
+  ansible.builtin.include_tasks: create-edge-group.yml
+  loop_control:
+    loop_var: group
+  loop:
+    - omada
+    - rclone
+    - ai
 
-# - name: Create/Update GitHub Creds
-#   ansible.builtin.include_tasks: create-update-gh-creds.yml
+- name: Create/Update DockerHub Creds
+  ansible.builtin.include_tasks: create-update-dh-creds.yml
+
+- name: Create/Update GitHub Creds
+  ansible.builtin.include_tasks: create-update-gh-creds.yml
 
 - name: Refresh Existing Objects
   ansible.builtin.include_tasks: get-object-ids.yml

@@ -1,0 +1,12 @@
+- name: Configure Agent
+  ansible.builtin.uri:
+    url: "https://portainer.{{ secret_base_domain }}/api/endpoints/{{ agent_id }}/settings"
+    headers:
+      Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
+    body_format: json
+    body:
+      changeWindow:
+        Enabled: false
+      securitySettings:
+        enableHostManagementFeatures: true
+    method: "PUT"

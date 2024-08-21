@@ -1,0 +1,15 @@
+- name: Apply Backup Settings
+  ansible.builtin.uri:
+    url: "https://portainer.{{ secret_base_domain }}/api/backup/s3/settings"
+    headers:
+      Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
+    body_format: json
+    body:
+      accessKeyID: "{{ secret_portainer_r2_access_id }}"
+      secretAccessKey: "{{ secret_portainer_r2_access_key }}"
+      bucketName: "{{ secret_portainer_r2_bucket_name }}"
+      s3CompatibleHost: "{{ secret_portainer_r2_host }}"
+      password: "{{ secret_portainer_admin_pass }}"
+      cronRule: "0 2 * * *"
+    method: "POST"
+  register: config_set

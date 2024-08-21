@@ -1,0 +1,11 @@
+- name: Get Agent ID
+  ansible.builtin.uri:
+    url: "https://portainer.{{ secret_base_domain }}/api/endpoints?name={{ inventory_hostname }}"
+    headers:
+      Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
+    method: "GET"
+  register: agent
+
+- name: Set Agent ID
+  ansible.builtin.set_fact:
+    agent_id: "{{ agent['json'][0]['Id'] }}"
