@@ -89,3 +89,16 @@ Authorization: Bearer {{ getBearerToken.jwt }}
 
 GET {{ portainer_host }}/api/endpoints/907
 Authorization: Bearer {{ getBearerToken.jwt }}
+
+###
+# @name AddToEdgeGroup
+# @ref getBearerToken
+
+PUT {{ portainer_host }}/api/endpoint_groups/9
+Authorization: Bearer {{ getBearerToken.jwt }}
+
+{
+    "endpoints": [
+        909
+    ]
+}
