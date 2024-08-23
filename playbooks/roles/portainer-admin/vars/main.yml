@@ -1,3 +1,0 @@
-omada:
-  compose_path: "omada-controller/docker-compose.yml"
-  branch: "refs/heads/master"

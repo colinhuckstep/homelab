@@ -1,7 +1,7 @@
 - name: Update DockerHub Creds
-  when: dh_creds_id != []
+  when: dh_creds_id != ""
   ansible.builtin.uri:
-    url: "https://portainer.{{ secret_base_domain }}/api/registries/{{ dh_creds_id[0] }}"
+    url: "https://portainer.{{ secret_base_domain }}/api/registries/{{ dh_creds_id }}"
     headers:
       Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
     body_format: json
@@ -15,7 +15,7 @@
     method: "PUT"
 
 - name: Create Docker Creds
-  when: dh_creds_id == []
+  when: dh_creds_id == ""
   ansible.builtin.uri:
     url: "https://portainer.{{ secret_base_domain }}/api/registries"
     headers:

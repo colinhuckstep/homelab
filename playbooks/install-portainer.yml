@@ -2,6 +2,7 @@
   hosts: portainer_admin
   vars_files:
     - ~/repos/secrets/secrets.yml
+    - ~/repos/secrets/portainer.yml
   gather_facts: false
   roles:
     - portainer-admin
@@ -11,5 +12,15 @@
   gather_facts: true
   vars_files:
     - ~/repos/secrets/secrets.yml
+    - ~/repos/secrets/portainer.yml
   roles:
     - portainer-agent
+
+- name: Portainer Edge Groups and Stacks
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - ~/repos/secrets/secrets.yml
+    - ~/repos/secrets/portainer.yml
+  roles:
+    - portainer-groups-stacks

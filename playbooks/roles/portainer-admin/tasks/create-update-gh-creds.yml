@@ -1,7 +1,7 @@
 - name: Update GitHub Creds
-  when: gh_creds_id != []
+  when: gh_creds_id != ""
   ansible.builtin.uri:
-    url: "https://portainer.{{ secret_base_domain }}/api/users/1/gitcredentials/{{ gh_creds_id[0] }}"
+    url: "https://portainer.{{ secret_base_domain }}/api/users/1/gitcredentials/{{ gh_creds_id }}"
     headers:
       Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
     body_format: json
@@ -12,7 +12,7 @@
     method: "PUT"
 
 - name: Create GitHub Creds
-  when: gh_creds_id == []
+  when: gh_creds_id == ""
   ansible.builtin.uri:
     url: "https://portainer.{{ secret_base_domain }}/api/users/1/gitcredentials"
     headers:
@@ -25,3 +25,4 @@
     method: "POST"
     status_code:
       - 201
+      - 200

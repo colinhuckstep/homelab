@@ -20,6 +20,16 @@
     project_src: /container-vols/portainer/
     state: present
 
+- name: Wait For Admin to be Up
+  ansible.builtin.uri:
+    url: 'https://portainer.{{ secret_base_domain }}'
+    status_code:
+      - 200
+  until: uri_output.status == 200
+  retries: 24 # Retries for 24 * 5 seconds = 120 seconds = 2 minutes
+  delay: 5 # Every 5 seconds
+  register: uri_output
+
 - name: Get Admin JWT Token
   ansible.builtin.uri:
     url: "https://portainer.{{ secret_base_domain }}/api/auth"
@@ -42,27 +52,8 @@
 - name: Create Endpoint Group
   ansible.builtin.include_tasks: create-endpoint-group.yml
 
-- name: Create Edge Groups
-  ansible.builtin.include_tasks: create-edge-group.yml
-  loop_control:
-    loop_var: group
-  loop:
-    - omada
-    - rclone
-    - ai
-
 - name: Create/Update DockerHub Creds
   ansible.builtin.include_tasks: create-update-dh-creds.yml
 
 - name: Create/Update GitHub Creds
   ansible.builtin.include_tasks: create-update-gh-creds.yml
-
-- name: Refresh Existing Objects
-  ansible.builtin.include_tasks: get-object-ids.yml
-
-- name: Create/Update Edge Stacks
-  ansible.builtin.include_tasks: create-update-edge-stack.yml
-  loop_control:
-    loop_var: stack
-  loop:
-    - omada

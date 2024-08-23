@@ -5,15 +5,15 @@
     },
     "deploymentType": 0,
     "edgeGroups": [
-        {{ edge_group_id[0] | int }}
+        {{ edge_group_id | int }}
     ],
     "filePathInRepository": "{{ vars[stack].compose_path }}",
     "name": "{{ stack }}",
     "registries": [
-        {{ dh_creds_id[0] | int }}
+        {{ dh_creds_id | int }}
     ],
     "repositoryAuthentication": true,
-    "repositoryGitCredentialID": {{ gh_creds_id[0] | int }},
+    "repositoryGitCredentialID": {{ gh_creds_id | int }},
     "repositoryReferenceName": "{{ vars[stack].branch }}",
     "repositoryURL": "https://github.com/{{ secret_gh_user }}/apps"
 }

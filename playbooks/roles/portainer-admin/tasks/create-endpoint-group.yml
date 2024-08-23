@@ -5,5 +5,5 @@
       Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
     body_format: json
     body:
-      name: "{{ secret_portainer_group }}"
+      name: "{{ portainer_group }}"
     method: "POST"

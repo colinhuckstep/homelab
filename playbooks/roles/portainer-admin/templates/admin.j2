@@ -1,7 +1,7 @@
 services:
   admin:
-    image: portainer/portainer-ee:{{ secret_portainer_version }}
-    command: ["--admin-password","{{ secret_portainer_admin_pass }}", "--license-key", "{{ secret_portainer_license }}", "--edge-compute"]
+    image: portainer/portainer-ee:{{ portainer_version }}
+    command: ["--admin-password","{{ secret_portainer_admin_encrypted_pass }}", "--license-key", "{{ secret_portainer_license }}", "--edge-compute"]
     ports:
      - "9443:9443"
      - "8000:8000"

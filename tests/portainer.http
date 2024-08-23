@@ -102,3 +102,4 @@ Authorization: Bearer {{ getBearerToken.jwt }}
         909
     ]
 }
+

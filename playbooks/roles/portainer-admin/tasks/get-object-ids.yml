@@ -34,10 +34,10 @@
   ansible.builtin.set_fact:
     dh_creds_id: "{{ dh_creds_existing.json | json_query(query) }}"
   vars:
-    query: "[?Name=='dockerhub'].Id"
+    query: "[?Name=='dockerhub'].Id | [0]"
 
 - name: Check for GitHub Creds
   ansible.builtin.set_fact:
     gh_creds_id: "{{ gh_creds_existing.json | json_query(query) }}"
   vars:
-    query: "[?name=='gh-{{ secret_gh_user }}'].id"
+    query: "[?name=='gh-{{ secret_gh_user }}'].id | [0]"
