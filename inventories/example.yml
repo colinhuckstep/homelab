@@ -1,26 +1,23 @@
 all:
   hosts:
-    thedoctor:
+    node1:
       ansible_host: 172.16.0.2
       ansible_hostname: node1
       ansible_user: user
       ansible_python_interpreter: "/home/{{ ansible_user }}/venvs/default/bin/python"
-      vars:
-        ctrld_resolver: <<your resolver id>>
-    amy:
+      ctrld_resolver: <<your resolver id>>
+    node2:
       ansible_host: 172.16.0.3
       ansible_hostname: node2
       ansible_user: user
       ansible_python_interpreter: "/home/{{ ansible_user }}/venvs/default/bin/python"
-      vars:
-        ctrld_resolver: <<your resolver id>>
-    rory:
+      ctrld_resolver: <<your resolver id>>
+    node3:
       ansible_host: 172.16.0.4
       ansible_hostname: node3
       ansible_user: user
       ansible_python_interpreter: "/home/{{ ansible_user }}/venvs/default/bin/python"
-      vars:
-        ctrld_resolver: <<your resolver id>>
+      ctrld_resolver: <<your resolver id>>
 
 portainer_admin:
   hosts:
