@@ -1,5 +1,5 @@
 - name: Install ControlD
   become: true
-  ansible.builtin.command: "sh -c 'sh -c \"$(curl -sSL https://api.controld.com/dl)\" -s {{ hostvars[inventory_hostname].vars.ctrld_resolver }} forced'"
+  ansible.builtin.command: "sh -c 'sh -c \"$(curl -sSL https://api.controld.com/dl)\" -s {{ hostvars[inventory_hostname]['ctrld_resolver'] }} forced'"
   args:
     creates: /usr/local/bin/ctrld

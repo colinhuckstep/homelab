@@ -1,0 +1,42 @@
+- name: Check for Edge Group
+  ansible.builtin.set_fact:
+    eg_id: "{{ edge_groups_existing.json | json_query(query) }}"
+  vars:
+    query: "[?Name=='{{ group['name'] }}'].Id | [0]"
+
+- name: Set Agent IDs
+  ansible.builtin.set_fact:
+    agent_ids: []
+
+- name: Get Agent IDs
+  ansible.builtin.set_fact:
+    agent_ids: "{{ agent_ids + [agent_ids_existing.json | json_query(query)] }}"
+  vars:
+    query: "[?Name=='{{ agent }}'].Id | [0]"
+  loop: "{{ group['members'] }}"
+  loop_control:
+    loop_var: agent
+
+- name: "Create Edge Group {{ group['name'] }}"
+  when: eg_id == ""
+  ansible.builtin.uri:
+    url: "https://portainer.{{ secret_base_domain }}/api/edge_groups"
+    headers:
+      Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
+    body_format: json
+    body:
+      name: "{{ group['name'] }}"
+      endpoints: "{{ agent_ids }}"
+    method: "POST"
+
+- name: "Update Edge Group {{ group['name'] }}"
+  when: eg_id != ""
+  ansible.builtin.uri:
+    url: "https://portainer.{{ secret_base_domain }}/api/edge_groups/{{ eg_id }}"
+    headers:
+      Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
+    body_format: json
+    body:
+      name: "{{ group['name'] }}"
+      endpoints: "{{ agent_ids }}"
+    method: "PUT"

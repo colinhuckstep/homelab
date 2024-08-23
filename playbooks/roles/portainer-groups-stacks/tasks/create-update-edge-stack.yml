@@ -1,0 +1,31 @@
+- name: Check for Edge Group
+  ansible.builtin.set_fact:
+    edge_group_id: "{{ edge_groups_existing.json | json_query(query) }}"
+  vars:
+    query: "[?Name=='{{ stack }}'].Id | [0]"
+
+- name: Check for Edge Stack
+  ansible.builtin.set_fact:
+    edge_stack_id: "{{ edge_stacks_existing.json | json_query(query) }}"
+  vars:
+    query: "[?Name=='{{ stack }}'].Id | [0]"
+
+- name: Create Body from Template
+  ansible.builtin.template:
+    src: edge-stack-body.j2
+    dest: "/tmp/{{ stack }}-stack.json"
+    mode: "0664"
+
+- name: "Create Edge Stack {{ stack }}"
+  when: edge_stack_id == ""
+  ansible.builtin.uri:
+    url: "https://portainer.{{ secret_base_domain }}/api/edge_stacks/create/repository"
+    headers:
+      Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
+    body_format: json
+    src: "/tmp/{{ stack }}-stack.json"
+    remote_src: true
+    method: "POST"
+    status_code:
+      - 201
+      - 200

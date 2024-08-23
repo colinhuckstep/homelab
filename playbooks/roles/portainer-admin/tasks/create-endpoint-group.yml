@@ -1,0 +1,9 @@
+- name: Create Endpoint Group
+  ansible.builtin.uri:
+    url: "https://portainer.{{ secret_base_domain }}/api/endpoint_groups"
+    headers:
+      Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
+    body_format: json
+    body:
+      name: "{{ portainer_group }}"
+    method: "POST"

@@ -25,19 +25,3 @@
     - powerpanel_version: 1.4.1
   roles:
     - powerpanel
-
-- name: Portainer Admin Install
-  hosts: portainer_admin
-  vars_files:
-    - ~/repos/secrets/secrets.yml
-  gather_facts: false
-  roles:
-    - portainer-admin
-
-- name: Portainer Edge Agent Install
-  hosts: portainer_agents
-  gather_facts: true
-  vars_files:
-    - ~/repos/secrets/secrets.yml
-  roles:
-    - portainer-agent

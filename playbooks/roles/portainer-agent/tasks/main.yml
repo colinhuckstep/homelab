@@ -37,3 +37,9 @@
   community.docker.docker_compose_v2:
     project_src: /container-vols/portainer-agent/
     state: present
+
+- name: Get Agent ID
+  ansible.builtin.include_tasks: get-agent-id.yml
+
+- name: Configure Agent
+  ansible.builtin.include_tasks: configure-agent.yml

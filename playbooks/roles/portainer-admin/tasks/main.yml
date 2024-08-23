@@ -20,6 +20,16 @@
     project_src: /container-vols/portainer/
     state: present
 
+- name: Wait For Admin to be Up
+  ansible.builtin.uri:
+    url: 'https://portainer.{{ secret_base_domain }}'
+    status_code:
+      - 200
+  until: uri_output.status == 200
+  retries: 24 # Retries for 24 * 5 seconds = 120 seconds = 2 minutes
+  delay: 5 # Every 5 seconds
+  register: uri_output
+
 - name: Get Admin JWT Token
   ansible.builtin.uri:
     url: "https://portainer.{{ secret_base_domain }}/api/auth"
@@ -31,65 +41,19 @@
   register: portainer_auth_token
 
 - name: Apply Config
-  ansible.builtin.uri:
-    url: "https://portainer.{{ secret_base_domain }}/api/settings"
-    headers:
-      Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
-    body_format: json
-    body: "{{ lookup('ansible.builtin.file', '~/repos/secrets/portainer/config.json') }}"
-    method: "PUT"
-  register: config_set
-  changed_when: config_set.status == 200
+  ansible.builtin.include_tasks: apply-config.yml
+
+- name: Apply Backup Settings
+  ansible.builtin.include_tasks: apply-backup-config.yml
+
+- name: Get Existing Objects
+  ansible.builtin.include_tasks: get-object-ids.yml
 
 - name: Create Endpoint Group
-  ansible.builtin.uri:
-    url: "https://portainer.{{ secret_base_domain }}/api/endpoint_groups"
-    headers:
-      Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
-    body_format: json
-    body:
-      name: "{{ secret_portainer_group }}"
-    method: "POST"
+  ansible.builtin.include_tasks: create-endpoint-group.yml
 
-- name: Create Docker Creds
-  ansible.builtin.uri:
-    url: "https://portainer.{{ secret_base_domain }}/api/registries"
-    headers:
-      Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
-    body_format: json
-    body:
-      name: "dockerhub"
-      type: 6
-      url: docker.io
-      username: "{{ secret_portainer_dockerhub_user }}"
-      password: "{{ secret_portainer_dockerhub_pat }}"
-      authentication: true
-    method: "POST"
-  register: dh_create
-  failed_when:
-    - dh_create.status != 200
-    - dh_create.status != 409
+- name: Create/Update DockerHub Creds
+  ansible.builtin.include_tasks: create-update-dh-creds.yml
 
-- name: Create Edge Groups
-  ansible.builtin.include_tasks: create-edge-group.yml
-  with_items:
-    - "omada"
-    - "rclone"
-    - "ai"
-
-- name: Create GitHub Creds
-  ansible.builtin.uri:
-    url: "https://portainer.{{ secret_base_domain }}/api/users/1/gitcredentials"
-    headers:
-      Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
-    body_format: json
-    body:
-      name: "gh-{{ secret_gh_user }}"
-      username: "{{ secret_gh_user }}"
-      password: "{{ secret_gh_token }}"
-    method: "POST"
-  register: gh_create
-  failed_when:
-    - gh_create.status != 201
-    - (gh_create.status == 400) and (gh_create.json['message'] != 'Git credential name already exists')
-    
+- name: Create/Update GitHub Creds
+  ansible.builtin.include_tasks: create-update-gh-creds.yml
