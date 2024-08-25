@@ -1,29 +1,7 @@
-- name: Create Certs Directory
-  ansible.builtin.file:
-    path: /container-vols/adguard/certs
-    state: directory
-    mode: "0770"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+- name: Create Adguard
+  ansible.builtin.include_tasks: adguard.yml
 
-- name: Create Config Directory
-  ansible.builtin.file:
-    path: /container-vols/adguard/config
-    state: directory
-    mode: "0770"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-
-- name: Copy Config
-  ansible.builtin.copy:
-    src: ~/repos/secrets/adguard/AdGuardHome.yaml
-    dest: /container-vols/adguard/config
-    mode: "0770"
-
-- name: Copy Sync Config
-  ansible.builtin.copy:
-    src: ~/repos/secrets/adguard/adguardhome-sync.yaml
-    dest: /container-vols/adguard-sync/
-    mode: "0770"
+- name: Create Adguard Sync
+  ansible.builtin.include_tasks: adguard-sync.yml
   loop: "{{ hostvars[inventory_hostname]['container_vols'] }}"
   when: item == 'adguard-sync'

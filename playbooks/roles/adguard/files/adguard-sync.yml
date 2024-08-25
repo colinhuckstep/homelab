@@ -1,0 +1,17 @@
+---
+services:
+  api:
+    image: linuxserver/adguardhome-sync:latest
+    container_name: adguardhome-sync
+    volumes:
+      - /container-vols/adguard-sync/config:/config
+      - /container-vols/adguard/certs:/certs
+    # ports:
+    #   - 8080:8080
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Indiana/Indianapolis
+      - CONFIGFILE=/config/adguardhome-sync.yaml
+    network_mode: host

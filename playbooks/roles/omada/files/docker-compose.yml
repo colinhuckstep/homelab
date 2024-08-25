@@ -1,0 +1,20 @@
+services:
+  controller:
+    image: mbentley/omada-controller:5.13
+    restart: unless-stopped
+    privileged: true
+    environment:
+      - MANAGE_HTTP_PORT=8088
+      - MANAGE_HTTPS_PORT=8043
+      - PGID=1000
+      - PORTAL_HTTP_PORT=8088
+      - PORTAL_HTTPS_PORT=8043
+      - PUID=1000
+      - SHOW_SERVER_LOGS=true
+      - SHOW_MONGODB_LOGS=false
+      - TZ=America/Indiana/Indianapolis
+    volumes:
+      - /container-vols/omada/data:/opt/tplink/EAPController/data
+      - /container-vols/omada/backup:/opt/tplink/EAPController/data/autobackup
+      - /container-vols/omada/logs:/opt/tplink/EAPController/logs
+    network_mode: host

@@ -1,0 +1,10 @@
+services:
+  dns:
+    image: adguard/adguardhome:latest
+    privileged: true
+    volumes:
+      - /container-vols/adguard/work:/opt/adguardhome/work
+      - /container-vols/adguard/config:/opt/adguardhome/conf
+      - /container-vols/adguard/certs:/certs
+    restart: unless-stopped
+    network_mode: host
