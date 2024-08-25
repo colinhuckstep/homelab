@@ -33,3 +33,12 @@
         mode: "0770"
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
+
+    - name: Create Container Vols
+      ansible.builtin.file:
+        path: "/container-vols/{{ item }}"
+        state: directory
+        mode: "0770"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+      loop: "{{ hostvars[inventory_hostname]['container_vols'] }}"

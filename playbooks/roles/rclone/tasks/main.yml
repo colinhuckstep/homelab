@@ -1,0 +1,23 @@
+- name: Install Rclone
+  become: true
+  ansible.builtin.apt:
+    name:
+      - rclone
+    update_cache: true
+    state: present
+
+- name: Create Config Directory
+  ansible.builtin.file:
+    path: /container-vols/backup
+    state: directory
+    mode: "0770"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Copy GoogleDrive Creds
+  ansible.builtin.copy:
+    src: ~/repos/secrets/gdrive.json
+    dest: /container-vols/backup/gdrive.json
+    mode: "0770"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
