@@ -5,30 +5,35 @@ all:
       ansible_hostname: node1
       ansible_user: user
       ansible_python_interpreter: "/home/{{ ansible_user }}/venvs/default/bin/python"
-      ctrld_resolver: <<your resolver id>>
+      container_vols:
+        - adguard
     node2:
       ansible_host: 172.16.0.3
       ansible_hostname: node2
       ansible_user: user
       ansible_python_interpreter: "/home/{{ ansible_user }}/venvs/default/bin/python"
-      ctrld_resolver: <<your resolver id>>
+      container_vols:
+        - adguard
+        - adguard-sync
     node3:
       ansible_host: 172.16.0.4
       ansible_hostname: node3
       ansible_user: user
       ansible_python_interpreter: "/home/{{ ansible_user }}/venvs/default/bin/python"
-      ctrld_resolver: <<your resolver id>>
-
-portainer_admin:
-  hosts:
-    node1:
-
-portainer_agents:
-  hosts:
-    node1:
-    node2:
-    node3:
+      container_vols:
+        - adguard
+        - omada
 
 power_panel:
   hosts:
     node1:
+
+adguard:
+  hosts:
+    node2:
+    node3:
+    node1:
+
+omada:
+  hosts:
+    node3:

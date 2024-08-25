@@ -51,6 +51,7 @@
     path: ~/venvs/default
     state: directory
     mode: "0770"
+
 - name: Install Python Prereqs
   ansible.builtin.pip:
     name:
