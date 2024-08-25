@@ -4,6 +4,6 @@
     headers:
       Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
     body_format: json
-    body: "{{ lookup('ansible.builtin.file', '~/repos/secrets/portainer/config.json') }}"
+    body: "{{ lookup('ansible.builtin.file', '{{ config_source }}/portainer/config.json') }}"
     method: "PUT"
   register: config_set

@@ -16,7 +16,7 @@
 
 - name: Copy GoogleDrive Creds
   ansible.builtin.copy:
-    src: ~/repos/secrets/gdrive.json
+    src: "{{ config_source }}/gdrive.json"
     dest: /container-vols/backup/gdrive.json
     mode: "0770"
     owner: "{{ ansible_user }}"
