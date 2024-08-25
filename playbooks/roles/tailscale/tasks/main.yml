@@ -17,6 +17,7 @@
       ansible.builtin.shell: |
         tailscale up \
         --accept-routes=false \
+        --accept-dns=false \
         --advertise-exit-node \
         --reset \
         --auth-key {{ secret_tailscale_auth_key }} \
