@@ -3,11 +3,13 @@
     user: "{{ ansible_user }}"
     state: present
     key: "https://github.com/{{ secret_gh_user }}.keys"
+
 - name: Copy Private Key
   ansible.builtin.copy:
     src: "/home/{{ ansible_user }}/repos/secrets/id_{{ inventory_hostname }}"
     dest: "/home/{{ ansible_user }}/.ssh/id_ed25519"
     mode: "0600"
+
 - name: Set Passwordless Sudo
   become: true
   ansible.builtin.lineinfile:
@@ -15,6 +17,7 @@
     line: "{{ ansible_user }} ALL=(ALL:ALL) NOPASSWD: ALL"
     create: true
     mode: "0644"
+
 - name: Set SSH to Key Only
   become: true
   ansible.builtin.lineinfile:
@@ -22,6 +25,7 @@
     search_string: "#PasswordAuthentication yes"
     line: "PasswordAuthentication no"
   notify: 'Restart SSHD'
+
 - name: Install Package Prereqs
   become: true
   ansible.builtin.apt:
