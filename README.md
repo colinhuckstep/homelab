@@ -28,8 +28,8 @@ Adguard Home is used for my local DNS and filtering. It is deployed in and Activ
 ## Omada Controller
 Omada controller is used for my Switches and WAPs. This urns on node 3. There is a bind mount for the automatic omada backups. Backups are encrypted.
 
-## (WIP) Rclone
-Rclone is configured to copy encrypted backups from various container volumes to GoogleDrive. Specific configuration steps for this are outside of the purview of this document. A brief outline of the related docs may be created in the future.
+## Rclone
+Rclone is configured to copy encrypted backups from various container volumes and pfsense to GoogleDrive. This uses a GoogleDrive API service account to copy to GoogleDrive and SFTP connection to pull the files from pfsense. Adguard configs get the hostname appended to the end of them.
 
 ## Archived Playbooks/Roles
 
