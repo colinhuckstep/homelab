@@ -1,0 +1,47 @@
+global_defs {
+    script_user {{ ansible_user }}
+    enable_script_security
+}
+
+vrrp_script dns_check {
+    script "/container-vols/adguard/healthcheck-dns.sh"
+    interval 1
+    timeout 5
+    fall 3
+}
+
+vrrp_script https_check {
+    script "/container-vols/adguard/healthcheck-https.sh"
+    interval 1
+    timeout 5
+    fall 3
+}
+
+vrrp_instance adguard {
+  state {{ hostvars[inventory_hostname]['keepalived']['state'] }}
+  interface {{ hostvars[inventory_hostname]['keepalived']['interface'] }}
+
+  unicast_src_ip {{ ansible_host }}
+  unicast_peer {
+    {{ hostvars[inventory_hostname]['keepalived']['peer1_ip'] }}
+    {{ hostvars[inventory_hostname]['keepalived']['peer2_ip'] }}
+  }
+
+  virtual_router_id 1
+  priority {{ hostvars[inventory_hostname]['keepalived']['priority'] }}
+  advert_int 1
+
+  authentication {
+    auth_type PASS
+    auth_pass {{ secret_vrrp_pass }}
+  }
+
+  virtual_ipaddress {
+    {{ hostvars[inventory_hostname]['keepalived']['vip'] }}
+  }
+
+  track_script {
+    dns_check
+    https_check
+  }
+}
