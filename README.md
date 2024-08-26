@@ -34,3 +34,6 @@ Rclone is configured to copy encrypted backups from various container volumes an
 ## Archived Playbooks/Roles
 
 I've stopped using Portainer and ControlD. Playbooks and Roles are in the archived folders for historical reference
+
+## Next Steps
+Prometheus and Grafana probably cloud, maybe not.
