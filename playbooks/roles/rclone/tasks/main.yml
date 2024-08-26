@@ -21,3 +21,18 @@
     mode: "0770"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
+
+- name: Copy Rclone Config
+  ansible.builtin.copy:
+    src: "{{ config_source }}/rclone.conf"
+    dest: /container-vols/backup/rclone.conf
+    mode: "0770"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Backup Vols
+  ansible.builtin.include_tasks: backup-vols.yml
+
+- name: Backup pfsense
+  ansible.builtin.include_tasks: backup-pfsense.yml
+  loop: "{{ hostvars[inventory_hostname]['backup_pfsense'] }}"

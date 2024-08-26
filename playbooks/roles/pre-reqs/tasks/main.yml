@@ -37,6 +37,7 @@
       - python3-pip
       - python3-venv
       - python3-virtualenv
+      - jq
     update_cache: true
 
 - name: Configure Git User

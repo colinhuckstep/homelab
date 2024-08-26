@@ -1,21 +1,22 @@
-# ---
-# - name: Basic Setup
-#   hosts: all
-#   gather_facts: false
-#   vars_files:
-#     - ~/repos/secrets/secrets.yml
-#   vars:
-#     - ansible_ssh_password: "{{ secret_temp_password }}"
-#     - ansible_python_interpreter: "/usr/bin/python3"
-#     - system_timezone: "America/Indiana/Indianapolis"
-#   roles:
-#     - pre-reqs
-#     - patch
-#     - tailscale
-#     - starship
-#     - docker
-#     - rclone
-#     - prometheus
+---
+- name: Basic Setup
+  hosts: all
+  gather_facts: false
+  vars_files:
+    - ~/repos/secrets/secrets.yml
+  vars:
+    - ansible_ssh_password: "{{ secret_temp_password }}"
+    - ansible_python_interpreter: "/usr/bin/python3"
+    - system_timezone: "America/Indiana/Indianapolis"
+  roles:
+    - pre-reqs
+    - patch
+    - tailscale
+    - starship
+    - docker
+    # - prometheus
+    - rclone
+
 
 - name: Install AdGuard
   hosts: adguard
@@ -25,20 +26,20 @@
   roles:
     - adguard
 
-# - name: Install Omada
-#   hosts: omada
-#   gather_facts: false
-#   vars_files:
-#     - ~/repos/secrets/secrets.yml
-#   roles:
-#     - omada
+- name: Install Omada
+  hosts: omada
+  gather_facts: false
+  vars_files:
+    - ~/repos/secrets/secrets.yml
+  roles:
+    - omada
 
-# - name: Install Power Panel
-#   hosts: power_panel
-#   gather_facts: false
-#   vars_files:
-#     - ~/repos/secrets/secrets.yml
-#   vars:
-#     - powerpanel_version: 1.4.1
-#   roles:
-#     - powerpanel
+- name: Install Power Panel
+  hosts: power_panel
+  gather_facts: false
+  vars_files:
+    - ~/repos/secrets/secrets.yml
+  vars:
+    - powerpanel_version: 1.4.1
+  roles:
+    - powerpanel
