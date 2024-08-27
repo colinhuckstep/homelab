@@ -1,6 +1,11 @@
 [Unit]
 Description=BackupContainerVols
+Requires=backup-vols.service
+
 [Timer]
+Unit=backup-vols.service
 OnCalendar=*-*-* 02:00:00
+Persistent=true
+
 [Install]
 WantedBy=timers.target

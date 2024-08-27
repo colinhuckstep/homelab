@@ -1,8 +1,10 @@
 [Unit]
 Description=BackupContainerVols
+Wants=backup-vols.timer
+
 [Service]
 Environment=RCLONE_CONFIG="/container-vols/backup/rclone.conf"
 ExecStart=/usr/bin/bash /container-vols/backup/backup-vols.sh {{ inventory_hostname }}
 
 [Install]
-WantedBy=default.target
+WantedBy=multi-user.target

@@ -26,3 +26,4 @@
     name: backup-vols.timer
     enabled: true
     daemon_reload: true
+    state: started
