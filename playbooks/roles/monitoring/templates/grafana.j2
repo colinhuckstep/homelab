@@ -1,0 +1,5 @@
+[server]
+# Protocol (http, https, h2, socket)
+protocol = https
+domain = grafana.{{ secret_base_domain }}
+root_url = %(protocol)s://%(domain)s

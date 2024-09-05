@@ -1,0 +1,23 @@
+- name: Create Prometheus Directory
+  ansible.builtin.file:
+    path: /container-vols/prometheus/data
+    state: directory
+    mode: "0777"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Copy Exporter Docker-Compose
+  ansible.builtin.template:
+    src: exporter.j2
+    dest: /container-vols/prometheus/exporter.yml
+    mode: "0770"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Deploy Exporter
+  community.docker.docker_compose_v2:
+    project_src: /container-vols/prometheus/
+    files:
+      - exporter.yml
+    state: present
+    project_name: node_exporter

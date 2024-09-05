@@ -1,0 +1,86 @@
+- name: Create Prometheus Data Directory
+  ansible.builtin.file:
+    path: /container-vols/prometheus/data
+    state: directory
+    mode: "0775"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Create Grafana Data Directory
+  ansible.builtin.file:
+    path: /container-vols/grafana/data
+    state: directory
+    mode: "0775"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Copy Prometheus Config
+  become: true
+  ansible.builtin.template:
+    src: prometheus.j2
+    dest: /container-vols/prometheus/prometheus.yaml
+    mode: "0664"
+
+- name: Copy Prometheus Web Config
+  become: true
+  ansible.builtin.template:
+    src: web.j2
+    dest: /container-vols/prometheus/web.yaml
+    mode: "0664"
+
+- name: Copy Monitoring Docker-Compose
+  ansible.builtin.template:
+    src: dashboard.j2
+    dest: /container-vols/prometheus/dashboard.yml
+    mode: "0664"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Deploy Monitoring
+  community.docker.docker_compose_v2:
+    project_src: /container-vols/prometheus/
+    files:
+      - dashboard.yml
+    state: present
+    project_name: prometheus
+
+- name: Create Data Source
+  ansible.builtin.uri:
+    url: https://grafana.{{ secret_base_domain }}/api/datasources
+    user: "{{ ansible_user }}"
+    password: "{{ secret_grafana_admin_password }}"
+    method: "POST"
+    force_basic_auth: true
+    body_format: json
+    body:
+      name: Prometheus
+      type: prometheus
+      url: "https://prometheus.{{ secret_base_domain }}"
+      basicAuth: false
+      access: proxy
+      jsonData:
+        httpMethod: POST
+    status_code:
+      - 200
+      - 409
+
+- name: Copy Monitoring Docker-Compose
+  ansible.builtin.copy:
+    src: node-exporter-full.json
+    dest: /container-vols/prometheus/node-exporter-full.json
+    mode: "0664"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Import Node Exporter Dashboard
+  ansible.builtin.uri:
+    url: https://grafana.{{ secret_base_domain }}/api/dashboards/db
+    user: "{{ ansible_user }}"
+    password: "{{ secret_grafana_admin_password }}"
+    method: "POST"
+    force_basic_auth: true
+    body_format: json
+    src: node-exporter-full.json
+    status_code:
+      - 200
+      - 412

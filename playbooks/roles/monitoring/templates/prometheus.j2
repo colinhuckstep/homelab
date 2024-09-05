@@ -1,0 +1,25 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'node'
+    static_configs:
+      - targets: {{ node_exporter_targets }}
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: {{ cadvisor_targets }}
+  - job_name: 'adguard'
+    scheme: 'https'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: {{ adguard_targets }}
+    basic_auth:
+      username: {{ secret_adguard_user }}
+      password: {{ secret_adguard_password }}
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['prometheus.{{ secret_base_domain }}:443']
+    scheme: https  # Use HTTPS
+    tls_config:
+      cert_file: '/etc/prometheus/prometheus.crt'
+      key_file: '/etc/prometheus/prometheus.key'

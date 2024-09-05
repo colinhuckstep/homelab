@@ -1,0 +1,6 @@
+- name: Exporter
+  ansible.builtin.include_tasks: exporter.yml
+
+- name: Dashboard
+  when: inventory_hostname in groups['monitoring_dashboard']
+  ansible.builtin.include_tasks: dashboard.yml
