@@ -5,7 +5,7 @@ services:
     container_name: adguardhome-sync
     volumes:
       - /container-vols/adguard-sync/config:/config
-      - /container-vols/adguard/certs:/certs
+      - /container-vols/certs:/certs
     # ports:
     #   - 8080:8080
     restart: unless-stopped

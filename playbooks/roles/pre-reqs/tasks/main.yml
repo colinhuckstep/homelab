@@ -26,6 +26,40 @@
     line: "PasswordAuthentication no"
   notify: 'Restart SSHD'
 
+- name: Ensure Debian Repos Exist
+  become: true
+  ansible.builtin.deb822_repository:
+    name: debian
+    types: deb
+    uris:
+      - http://deb.debian.org/debian
+    suites:
+      - bookworm
+      - bookworm-updates
+    components:
+      - main
+    signed_by: /usr/share/keyrings/debian-archive-keyring.gpg
+
+- name: Ensure Debian Security Repos Exist
+  become: true
+  ansible.builtin.deb822_repository:
+    name: debian-security
+    types: deb
+    uris:
+      - http://deb.debian.org/debian-security
+    suites:
+      - bookworm-security
+    components:
+      - main
+    signed_by: /usr/share/keyrings/debian-archive-keyring.gpg
+
+- name: Remove Debian DVD Repo
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/apt/sources.list
+    regexp: .*cdrom.*
+    state: absent
+
 - name: Install Package Prereqs
   become: true
   ansible.builtin.apt:

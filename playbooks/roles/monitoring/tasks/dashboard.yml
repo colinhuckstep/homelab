@@ -63,6 +63,8 @@
     status_code:
       - 200
       - 409
+  retries: 60
+  delay: 5
 
 - name: Copy Monitoring Docker-Compose
   ansible.builtin.copy:

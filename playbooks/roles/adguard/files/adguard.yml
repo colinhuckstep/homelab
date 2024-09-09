@@ -5,6 +5,6 @@ services:
     volumes:
       - /container-vols/adguard/work:/opt/adguardhome/work
       - /container-vols/adguard/config:/opt/adguardhome/conf
-      - /container-vols/adguard/certs:/certs
+      - /container-vols/certs:/certs
     restart: unless-stopped
     network_mode: host

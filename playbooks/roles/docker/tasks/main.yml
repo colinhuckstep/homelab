@@ -42,3 +42,8 @@
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
       loop: "{{ hostvars[inventory_hostname]['container_vols'] }}"
+
+- name: Copy Star Cert from pfsense
+  ansible.builtin.command:
+    cmd: "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null admin@{{ secret_resolver_router }}:/cf/conf/acme/star.{{ secret_base_domain }}.* /container-vols/certs" # noqa yaml[line-length]
+    creates: /container-vols/certs/star.{{ secret_base_domain }}.fullchain
