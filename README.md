@@ -1,5 +1,5 @@
 # Description
-This is the Ansible Playbooks for building/rebuilding/adding a node to my homelab. The new-host.yml playbook will patch all nodes to latest then install Docker, Tailscale, ~~ControlD~~, PowerPanel (On the node controlling the UPS), Staship Shell, and ~~Portainer Admin and Edge Agents~~. Any necessary pre-reqs will be installed either by the pre-reqs role or the role for the specific service.
+This is the Ansible Playbooks for building/rebuilding/adding a node to my homelab. The new-host.yml playbook will patch all nodes to latest then install Docker, Tailscale, PowerPanel (On the node controlling the UPS), and Staship Shell. Any necessary pre-reqs will be installed either by the pre-reqs role or the role for the specific service.
 
 ## Assumptions/Pre-sreqs
 - A workstation with Ansible Engine installed and a basic understanding of using Ansible
@@ -9,8 +9,6 @@ This is the Ansible Playbooks for building/rebuilding/adding a node to my homela
     - SSH Private Keys are stored with these secrets
 - There is a folder with configs for Adguard Home, Adguard Home Sync, and KeepaliveD Configs for each node. These can be stored in the secrets repo and encrypted with ansible-vault. It is up to you how to store them securely as they do contain sensetive data.
 - A Tailscale subscription
-- ~~A ControlD subscription~~ Archived
-- ~~A Portainer Business License (3 Nodes Free)~~ Archived
 - A PowerPanel Cloud Subscription
 
 ## Inventory
@@ -29,7 +27,7 @@ Adguard Home is used for my local DNS and filtering. It is deployed in and Activ
 Omada controller is used for my Switches and WAPs. This urns on node 3. There is a bind mount for the automatic omada backups. Backups are encrypted.
 
 ## Rclone
-Rclone is configured to copy encrypted backups from various container volumes and pfsense to GoogleDrive. This uses a GoogleDrive API service account to copy to GoogleDrive and SFTP connection to pull the files from pfsense. Adguard configs get the hostname appended to the end of them.
+Rclone is configured to copy encrypted backups from various container volumes and pfsense to GoogleDrive. This uses a GoogleDrive API service account to copy to GoogleDrive and SFTP connection to pull the files from pfsense.
 
 ## Archived Playbooks/Roles
 
