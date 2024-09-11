@@ -1,4 +1,16 @@
 ---
+- name: Security Setup
+  hosts: all
+  gather_facts: false
+  vars_files:
+    - ~/repos/secrets/secrets.yml
+  vars:
+    - ansible_ssh_password: "{{ secret_temp_password }}"
+    - ansible_become_password: "{{ secret_temp_password }}"
+    - ansible_python_interpreter: "/usr/bin/python3"
+  roles:
+    - security
+
 - name: Basic Setup
   hosts: all
   gather_facts: false
@@ -6,8 +18,6 @@
     - ~/repos/secrets/secrets.yml
     - "{{ config_source }}/monitoring/vars.yml"
   vars:
-    - ansible_ssh_password: "{{ secret_temp_password }}"
-    - ansible_become_password: "{{ secret_temp_password }}"
     - ansible_python_interpreter: "/usr/bin/python3"
     - system_timezone: "America/Indiana/Indianapolis"
   roles:

@@ -1,0 +1,8 @@
+- name: Set Security Tasks
+  ansible.builtin.include_tasks: security.yml
+
+- name: Change Password
+  become: true
+  ansible.builtin.user:
+    name: "{{ ansible_user }}"
+    password: "{{ secret_new_password }}"
