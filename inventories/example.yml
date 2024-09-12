@@ -4,14 +4,14 @@ all:
       ansible_host: 172.16.0.2
       ansible_hostname: node1
       ansible_user: user
-      ansible_python_interpreter: "/home/{{ ansible_user }}/venvs/default/bin/python"
+      ansible_python_interpreter: "{{ ansilbe_user_home }}/venvs/default/bin/python"
       container_vols:
         - adguard
     node2:
       ansible_host: 172.16.0.3
       ansible_hostname: node2
       ansible_user: user
-      ansible_python_interpreter: "/home/{{ ansible_user }}/venvs/default/bin/python"
+      ansible_python_interpreter: "{{ ansilbe_user_home }}/venvs/default/bin/python"
       container_vols:
         - adguard
         - adguard-sync
@@ -19,7 +19,7 @@ all:
       ansible_host: 172.16.0.4
       ansible_hostname: node3
       ansible_user: user
-      ansible_python_interpreter: "/home/{{ ansible_user }}/venvs/default/bin/python"
+      ansible_python_interpreter: "{{ ansilbe_user_home }}/venvs/default/bin/python"
       container_vols:
         - adguard
         - omada

@@ -1,0 +1,23 @@
+- name: Install sudo
+  ansible.builtin.apt:
+    name:
+      - sudo
+    update_cache: true
+- name: Set authorized keys taken from url
+  ansible.posix.authorized_key:
+    user: "{{ ansible_user }}"
+    state: present
+    key: "https://github.com/{{ secret_gh_user }}.keys"
+
+- name: Copy Private Key
+  ansible.builtin.copy:
+    src: "{{ config_source }}/repos/secrets/id_{{ inventory_hostname }}"
+    dest: "{{ ansilbe_user_home }}/.ssh/id_ed25519"
+    mode: "0600"
+
+- name: Set SSH to Key Only
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    search_string: "#PasswordAuthentication yes"
+    line: "PasswordAuthentication no"
+  notify: 'Restart SSHD'

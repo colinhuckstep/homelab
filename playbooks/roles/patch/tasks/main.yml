@@ -6,6 +6,9 @@
         name: "*"
         state: latest
         update_cache: true
+- name: Reboot
+  become: true
+  block:
     - name: Check if reboot required
       ansible.builtin.stat:
         path: /var/run/reboot-required

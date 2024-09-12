@@ -10,6 +10,6 @@
     creates: /usr/local/bin/starship
 - name: Install .bashrc
   ansible.builtin.copy:
-    src: "/home/{{ ansible_user }}/repos/secrets/.bashrc"
-    dest: "/home/{{ ansible_user }}/.bashrc"
+    src: "{{ config_source }}/repos/secrets/.bashrc"
+    dest: "$HOME/.bashrc"
     mode: "0600"

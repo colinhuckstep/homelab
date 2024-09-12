@@ -1,0 +1,25 @@
+- name: Configure Git User
+  community.general.git_config:
+    name: user.name
+    scope: global
+    value: "{{ secret_git_username }}"
+- name: Configure Git User
+  community.general.git_config:
+    name: user.email
+    scope: global
+    value: "{{ secret_email }}"
+
+- name: Create 'default' venv folder
+  ansible.builtin.file:
+    path: ~/venvs/default
+    state: directory
+    mode: "0770"
+
+- name: Install Python Prereqs
+  ansible.builtin.pip:
+    name:
+      - github3.py
+      - PyYAML
+      - jmespath
+    virtualenv: ~/venvs/default
+    virtualenv_site_packages: true

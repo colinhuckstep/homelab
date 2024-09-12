@@ -1,6 +1,3 @@
-- name: Remove node from Tailnet
-  ansible.builtin.include_tasks: remove.yml
-
 - name: Install tailscale
   ansible.builtin.include_tasks: install.yml
 

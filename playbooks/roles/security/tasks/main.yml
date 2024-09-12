@@ -1,3 +1,6 @@
+- name: Set Repos
+  ansible.builtin.include_tasks: repos.yml
+
 - name: Set Security Tasks
   ansible.builtin.include_tasks: security.yml
 
