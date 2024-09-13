@@ -1,0 +1,7 @@
+- name: Add Hostkeys
+  ansible.builtin.known_hosts:
+    path: "$HOME/.ssh/known_hosts"
+    name: "{{ item['hostname'] }}"
+    key: "{{ item['hostname'] }} ssh-{{ item['type'] }} {{ item['key'] }}"
+    hash_host: true
+  loop: "{{ hostvars[host]['hostkeys'] }}"

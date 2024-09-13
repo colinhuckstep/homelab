@@ -1,0 +1,22 @@
+- name: Get Hostkeys
+  ansible.builtin.set_fact:
+    hostkeys: >-
+      {{ (hostkeys|default([])) + [{
+        'hostname': ansible_host,
+        'type': item.key | selectattr('key', 'match', '^ansible_ssh_host_key_([^_]+)_public_keytype'),
+        'key': item.value
+      }] }}
+  loop: >-
+    {{ hostvars[inventory_hostname] |
+        dict2items |
+        selectattr('key', 'match', '^ansible_ssh_host_key_.*_public$') |
+        list }}
+
+- debug:
+    msg: "{{ hostvars [inventory_hostname] }}"
+
+# - name: Add Hostkeys
+#   ansible.builtin.include_tasks: hostkeys-add.yml
+#   loop: "{{ groups['proxmox'] }}"
+#   loop_control:
+#     loop_var: host

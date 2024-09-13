@@ -1,0 +1,4 @@
+- name: Create PVE Cluster
+  ansible.builtin.command:
+    cmd: "pvecm create {{ secret_pve_cluster_name }}"
+    creates: /etc/pve/corosync.conf

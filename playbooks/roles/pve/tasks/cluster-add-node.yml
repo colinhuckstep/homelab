@@ -1,0 +1,4 @@
+- name: Add node to cluster
+  ansible.builtin.command:
+    cmd: "pvecm add {{ secret_pve_cluster_primary_ip }} --use_ssh"
+    creates: /etc/pve/corosync.conf
