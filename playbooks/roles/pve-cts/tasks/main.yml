@@ -1,0 +1,6 @@
+- name: "Download CT {{ item }}"
+  ansible.builtin.command:
+    cmd: "pveam download local {{ item }}"
+    creates: "/var/lib/vz/template/cache/{{ item }}"
+  loop:
+    - "debian-12-standard_12.7-1_amd64.tar.zst"

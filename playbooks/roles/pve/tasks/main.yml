@@ -1,10 +1,10 @@
 - name: Trust Hostkeys
   ansible.builtin.include_tasks: hostkeys.yml
 
-# - name: Create Cluster
-#   ansible.builtin.include_tasks: cluster-create.yml
-#   when: inventory_hostname in groups['proxmox_primary']
+- name: Create Cluster
+  ansible.builtin.include_tasks: cluster-create.yml
+  when: inventory_hostname in groups['proxmox_primary']
 
-# - name: Add Nodes to Cluster
-#   ansible.builtin.include_tasks: cluster-add-node.yml
-#   when: inventory_hostname in groups['proxmox_secondary']
+- name: Add Nodes to Cluster
+  ansible.builtin.include_tasks: cluster-add-node.yml
+  when: inventory_hostname in groups['proxmox_secondary']

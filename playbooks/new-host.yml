@@ -36,10 +36,27 @@
 #   roles:
 #     - powerpanel
 
-- name: Build PVE Cluster
+# - name: Build PVE Cluster
+#   hosts: proxmox_primary
+#   gather_facts: true
+#   vars_files:
+#     - ~/repos/secrets/secrets.yml
+#   roles:
+#     - pve
+
+# - name: Add Nodes to PVE Cluster
+#   hosts: proxmox_secondary
+#   serial: 1
+#   gather_facts: true
+#   vars_files:
+#     - ~/repos/secrets/secrets.yml
+#   roles:
+#     - pve
+
+- name: Add CTs and ISOs to Nodes
   hosts: proxmox
-  gather_facts: true
+  gather_facts: false
   vars_files:
     - ~/repos/secrets/secrets.yml
   roles:
-    - pve
+    - pve-cts
