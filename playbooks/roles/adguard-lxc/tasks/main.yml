@@ -1,0 +1,25 @@
+- name: Create LXCs
+  # check_mode: true
+  community.general.terraform:
+    state: present
+    project_path: ~/repos/homelab/adguard
+    complex_vars: true
+    force_init: true
+    variables:
+      pve_api_host: "https://pmx.{{ secret_base_domain }}/api2/json"
+      lxc_password: "{{ secret_lxc_password }}"
+      pve_nodes: "{{ groups['proxmox'] }}"
+      lxc_ips: ["172.16.0.13/24", "172.16.0.14/24", "172.16.0.15/24"]
+      lxc_hostnames: ["ag1", "ag2", "ag3"]
+      lxc_gw: "172.16.0.1"
+      lxc_template: "local:vztmpl/debian-12-standard_12.7-1_amd64.tar.zst"
+      ssh_public_keys: <<-EOT
+          ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID6HDc+/KqF0d2+34ndpGLVXF1iVrMN+H+OnWCPGlBSi
+          ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINC8pAz7kyVMId2u/fruVZrmGWCQuod8JMrpYZS1zanH
+          ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEf4L1u8R9VvM79YiYB4jI/UgNjHfoPNm2UGUo+oapnL
+          ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILmaIUTiRQipJ2+qwjLtOZ8immyA/VjLEPe2Hp4DCNdU
+          ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH06LjNsl5lYBSxZ7d/YO/zzmb7qUAgm9otrB3JyCl7i
+          ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA7k21X+9AVAwvDjGkVlXTXAA/kQ0SBJBnumi5eQk336
+          ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIID7LBsWMVSkp02r6w0mgHWZjv+yY4CgaYJ1KjEqhc0U
+          ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHQuZ4Y/6OTdyisgxnY2Y7kW7SnuPPr2amsYUme6miE8
+        EOT
