@@ -1,28 +1,30 @@
-all:
+proxmox:
   hosts:
     node1:
       ansible_host: 172.16.0.2
       ansible_hostname: node1
-      ansible_user: user
+      ansible_user: root
       ansible_python_interpreter: "{{ ansilbe_user_home }}/venvs/default/bin/python"
-      container_vols:
-        - adguard
+
     node2:
       ansible_host: 172.16.0.3
       ansible_hostname: node2
-      ansible_user: user
+      ansible_user: root
       ansible_python_interpreter: "{{ ansilbe_user_home }}/venvs/default/bin/python"
-      container_vols:
-        - adguard
-        - adguard-sync
     node3:
       ansible_host: 172.16.0.4
       ansible_hostname: node3
-      ansible_user: user
+      ansible_user: root
       ansible_python_interpreter: "{{ ansilbe_user_home }}/venvs/default/bin/python"
-      container_vols:
-        - adguard
-        - omada
+
+proxmox_primary:
+  hosts:
+    node1:
+
+proxmox_secondary:
+  hosts:
+    node2:
+    node3:
 
 power_panel:
   hosts:
@@ -30,10 +32,10 @@ power_panel:
 
 adguard:
   hosts:
+    node1:
     node2:
     node3:
-    node1:
 
 omada:
   hosts:
-    node3:
+    node2:

@@ -1,0 +1,14 @@
+---
+- name: Deploy Adguard
+  hosts: adguard
+  gather_facts: false
+  vars_files:
+    - ~/repos/secrets/secrets.yml
+  vars:
+    api_host: "pmx.{{ secret_base_domain }}"
+    api_port: 443
+    api_user: "{{ secret_pve_username }}"
+    api_token_id: "{{ secret_pve_api_token_id }}"
+    api_token: "{{ secret_pve_api_token }}"
+  roles:
+    - adguard

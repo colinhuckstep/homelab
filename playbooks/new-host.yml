@@ -1,62 +1,45 @@
 ---
-# - name: Security Setup
-#   hosts: all
-#   gather_facts: false
-#   vars_files:
-#     - ~/repos/secrets/secrets.yml
-#   vars:
-#     - ansible_ssh_password: "{{ secret_temp_password }}"
-#     - ansible_become_password: "{{ secret_temp_password }}"
-#     - ansible_python_interpreter: "/usr/bin/python3"
-#   roles:
-#     - security
-
-# - name: Basic Setup
-#   hosts: all
-#   gather_facts: false
-#   vars_files:
-#     - ~/repos/secrets/secrets.yml
-#     - "{{ config_source }}/monitoring/vars.yml"
-#   vars:
-#     - ansible_python_interpreter: "/usr/bin/python3"
-#     - system_timezone: "America/Indiana/Indianapolis"
-#   roles:
-#     - tailscale
-#     - patch
-#     - pre-reqs
-#     - starship
-
-# - name: Install Power Panel
-#   hosts: power_panel
-#   gather_facts: false
-#   vars_files:
-#     - ~/repos/secrets/secrets.yml
-#   vars:
-#     - powerpanel_version: 1.4.1
-#   roles:
-#     - powerpanel
-
-# - name: Build PVE Cluster
-#   hosts: proxmox_primary
-#   gather_facts: true
-#   vars_files:
-#     - ~/repos/secrets/secrets.yml
-#   roles:
-#     - pve
-
-# - name: Add Nodes to PVE Cluster
-#   hosts: proxmox_secondary
-#   serial: 1
-#   gather_facts: true
-#   vars_files:
-#     - ~/repos/secrets/secrets.yml
-#   roles:
-#     - pve
-
-- name: Add CTs and ISOs to Nodes
+- name: Security Setup
   hosts: proxmox
   gather_facts: false
   vars_files:
     - ~/repos/secrets/secrets.yml
+  vars:
+    - ansible_ssh_password: "{{ secret_temp_password }}"
+    - ansible_become_password: "{{ secret_temp_password }}"
+    - ansible_python_interpreter: "/usr/bin/python3"
   roles:
-    - pve-cts
+    - security
+
+- name: Basic Setup
+  hosts: proxmox
+  gather_facts: false
+  vars_files:
+    - ~/repos/secrets/secrets.yml
+    - "{{ config_source }}/monitoring/vars.yml"
+  vars:
+    - ansible_python_interpreter: "/usr/bin/python3"
+    - system_timezone: "America/Indiana/Indianapolis"
+  roles:
+    - tailscale
+    - patch
+    - pre-reqs
+    - starship
+
+- name: Install Power Panel
+  hosts: power_panel
+  gather_facts: false
+  vars_files:
+    - ~/repos/secrets/secrets.yml
+  vars:
+    - powerpanel_version: 1.4.1
+  roles:
+    - powerpanel
+
+- name: Build PVE Cluster
+  hosts: proxmox
+  gather_facts: true
+  vars_files:
+    - ~/repos/secrets/secrets.yml
+  roles:
+    - pve

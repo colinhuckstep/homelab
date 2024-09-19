@@ -8,3 +8,18 @@
 - name: Add Nodes to Cluster
   ansible.builtin.include_tasks: cluster-add-node.yml
   when: inventory_hostname in groups['proxmox_secondary']
+
+- name: Create/Update TF Creds
+  ansible.builtin.include_tasks: create-tf-creds.yml
+
+- name: Update CT List
+  ansible.builtin.command:
+    cmd: "pveam update"
+    creates: "/var/lib/pve-manager/apl-info/releases.turnkeylinux.org"
+
+- name: "Download CT"
+  ansible.builtin.command:
+    cmd: "pveam download local {{ item }}"
+    creates: "/var/lib/vz/template/cache/{{ item }}"
+  loop:
+    - "debian-12-standard_12.7-1_amd64.tar.zst"
