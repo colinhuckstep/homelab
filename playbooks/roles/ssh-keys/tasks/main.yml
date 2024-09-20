@@ -1,0 +1,5 @@
+- name: Copy SSH Private Keys
+  ansible.builtin.copy:
+    src: "{{ config_source }}/id_{{ pve_host }}"
+    dest: "{{ ansible_user_home }}/.ssh/id_ed25519"
+    mode: "0600"

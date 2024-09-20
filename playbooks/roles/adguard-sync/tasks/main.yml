@@ -1,0 +1,79 @@
+- name: Patch LXC
+  ansible.builtin.apt:
+    name: "*"
+    state: latest
+    update_cache: true
+
+- name: Install Pre-reqs
+  ansible.builtin.apt:
+    name:
+      - curl
+      - wget
+      - git
+    update_cache: true
+
+- name: Stop AdGuard Home Sync
+  ansible.builtin.service:
+    name: adguardhome-sync
+    state: stopped
+  ignore_errors: true
+
+- name: Remove AdGuard Home Sync
+  ansible.builtin.file:
+    path: /opt/adguardhome-sync
+    state: absent
+
+- name: Get Latest Adguard Home Sync version
+  ansible.builtin.uri:
+    url: "https://api.github.com/repos/bakito/adguardhome-sync/releases/latest"
+    headers:
+      Authorization: "Bearer {{ secret_gh_token }}"
+    method: "GET"
+  register: latest_release
+
+- name: Set AdGuard Home Sync URL
+  ansible.builtin.set_fact:
+    adguard_sync_url: "{{ item['browser_download_url'] }}"
+    adguard_sync_name: "{{ item['name'] }}"
+  when: "'linux_amd64' in item['name']"
+  loop: "{{ latest_release.json['assets'] }}"
+
+- name: Get AdGuard Home Sync
+  ansible.builtin.get_url:
+    url: "{{ adguard_sync_url }}"
+    dest: "/tmp/{{ adguard_sync_name }}"
+    mode: "0777"
+    force: true
+
+- name: Create AdGuard Home Sync Directory
+  ansible.builtin.file:
+    path: "/opt/adguardhome-sync"
+    state: directory
+    mode: "0700"
+
+- name: Extract AdGuard Home Sync
+  ansible.builtin.unarchive:
+    src: "/tmp/{{ adguard_sync_name }}"
+    remote_src: true
+    dest: "/opt/adguardhome-sync"
+    mode: "0700"
+
+- name: Copy Config File
+  ansible.builtin.copy:
+    src: "{{ config_source }}/adguard/adguardhome-sync.yaml"
+    dest: "/opt/adguardhome-sync/adguardhome-sync.yaml"
+    mode: "0700"
+  notify: "Restart AdGuard Home Sync"
+
+- name: Install AdGuard Home Sync Service
+  ansible.builtin.copy:
+    src: "adguardhome-sync.service"
+    dest: "/etc/systemd/system/adguardhome-sync.service"
+    mode: "0755"
+
+- name: Enable AdGuard Home Sync Service
+  ansible.builtin.service:
+    name: adguardhome-sync
+    enabled: true
+    daemon_reload: true
+    state: started

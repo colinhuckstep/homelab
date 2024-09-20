@@ -9,6 +9,7 @@
     - ansible_become_password: "{{ secret_temp_password }}"
     - ansible_python_interpreter: "/usr/bin/python3"
   roles:
+    - ssh-key
     - security
 
 - name: Basic Setup

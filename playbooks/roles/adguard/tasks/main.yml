@@ -1,0 +1,19 @@
+- name: Patch LXCs
+  ansible.builtin.apt:
+    name: "*"
+    state: latest
+    update_cache: true
+
+- name: Install Pre-reqs
+  ansible.builtin.apt:
+    name:
+      - curl
+      - wget
+      - git
+    update_cache: true
+
+- name: Install KeepaliveD
+  ansible.builtin.include_tasks: keepalived.yml
+
+- name: Install AdGuard
+  ansible.builtin.include_tasks: adguard.yml

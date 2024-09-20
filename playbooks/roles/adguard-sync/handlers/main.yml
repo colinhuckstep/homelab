@@ -1,0 +1,5 @@
+- name: Restart AdGuard Home Sync
+  become: true
+  ansible.builtin.service:
+    name: adguardhome-sync
+    state: restarted

@@ -1,0 +1,11 @@
+- name: Restart KeepaliveD
+  become: true
+  ansible.builtin.service:
+    name: keepalived
+    state: restarted
+
+- name: Restart AdGuardHome
+  become: true
+  ansible.builtin.service:
+    name: AdGuardHome.service
+    state: restarted

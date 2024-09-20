@@ -4,18 +4,18 @@ proxmox:
       ansible_host: 172.16.0.2
       ansible_hostname: node1
       ansible_user: root
-      ansible_python_interpreter: "{{ ansilbe_user_home }}/venvs/default/bin/python"
+      ansible_python_interpreter: "{{ ansible_user_home }}/venvs/default/bin/python"
 
     node2:
       ansible_host: 172.16.0.3
       ansible_hostname: node2
       ansible_user: root
-      ansible_python_interpreter: "{{ ansilbe_user_home }}/venvs/default/bin/python"
+      ansible_python_interpreter: "{{ ansible_user_home }}/venvs/default/bin/python"
     node3:
       ansible_host: 172.16.0.4
       ansible_hostname: node3
       ansible_user: root
-      ansible_python_interpreter: "{{ ansilbe_user_home }}/venvs/default/bin/python"
+      ansible_python_interpreter: "{{ ansible_user_home }}/venvs/default/bin/python"
 
 proxmox_primary:
   hosts:
@@ -32,9 +32,51 @@ power_panel:
 
 adguard:
   hosts:
-    node1:
-    node2:
-    node3:
+    ag1:
+      ansible_host: 172.16.0.13
+      ansible_hostname: ag1
+      ansible_user: root
+      ansible_user_home: /root
+      pve_host: node1
+      keepalived:
+        peer1_ip: 172.16.0.14
+        peer2_ip: 172.16.0.15
+        state: MASTER
+        interface: eth0
+        priority: 200
+    ag2:
+      ansible_host: 172.16.0.14
+      ansible_hostname: ag2
+      ansible_user: root
+      ansible_user_home: /root
+      pve_host: node2
+      keepalived:
+        peer1_ip: 172.16.0.13
+        peer2_ip: 172.16.0.15
+        state: BACKUP
+        interface: eth0
+        priority: 150
+    ag3:
+      ansible_host: 172.16.0.15
+      ansible_hostname: ag3
+      ansible_user: root
+      ansible_user_home: /root
+      pve_host: node3
+      keepalived:
+        peer1_ip: 172.16.0.14
+        peer2_ip: 172.16.0.13
+        state: BACKUP
+        interface: eth0
+        priority: 100
+
+adguard_sync:
+  hosts:
+    agsync:
+      ansible_host: 172.16.0.16
+      ansible_hostname: agsync
+      ansible_user: root
+      ansible_user_home: /root
+      pve_host: node1
 
 omada:
   hosts:

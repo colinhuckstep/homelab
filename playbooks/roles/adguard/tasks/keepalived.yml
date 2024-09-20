@@ -6,7 +6,7 @@
 
 - name: Create KeepaliveD Folder
   ansible.builtin.file:
-    path: /container-vols/keepalived
+    path: /keepalived
     state: directory
     mode: "0770"
     owner: "{{ ansible_user }}"
@@ -15,13 +15,13 @@
 - name: Copy KeepaliveD DNS Check Script
   ansible.builtin.copy:
     src: healthcheck-dns.sh
-    dest: /container-vols/keepalived/healthcheck-dns.sh
+    dest: /keepalived/healthcheck-dns.sh
     mode: "0755"
 
 - name: Copy KeepaliveD HTTPS Check Script
   ansible.builtin.copy:
     src: healthcheck-https.sh
-    dest: /container-vols/keepalived/healthcheck-https.sh
+    dest: /keepalived/healthcheck-https.sh
     mode: "0755"
 
 - name: Configure KeepaliveD

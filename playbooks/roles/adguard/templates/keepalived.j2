@@ -4,14 +4,14 @@ global_defs {
 }
 
 vrrp_script dns_check {
-    script "/container-vols/adguard/healthcheck-dns.sh"
+    script "/keepalived/healthcheck-dns.sh"
     interval 1
     timeout 5
     fall 3
 }
 
 vrrp_script https_check {
-    script "/container-vols/adguard/healthcheck-https.sh"
+    script "/keepalived/healthcheck-https.sh"
     interval 1
     timeout 5
     fall 3
@@ -37,7 +37,7 @@ vrrp_instance adguard {
   }
 
   virtual_ipaddress {
-    {{ hostvars[inventory_hostname]['keepalived']['vip'] }}
+    {{ secret_resolver_adguard }}/24
   }
 
   track_script {

@@ -1,0 +1,12 @@
+- name: Create Certs Directory
+  ansible.builtin.file:
+    path: /certs
+    state: directory
+    mode: "0770"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Copy DNS Cert from pfsense
+  ansible.builtin.command:
+    cmd: "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null admin@{{ secret_resolver_router }}:/cf/conf/acme/dns.{{ secret_base_domain }}.* /certs" # noqa yaml[line-length]
+    creates: /certs/dns.{{ secret_base_domain }}.fullchain
