@@ -80,4 +80,12 @@ adguard_sync:
 
 omada:
   hosts:
-    node2:
+    omada:
+      ansible_host: 172.16.0.8
+      ansible_hostname: omada
+      ansible_user: root
+      ansible_user_home: /root
+      pve_host: node2
+      container_vols:
+        - omada
+        - certs

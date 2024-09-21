@@ -3,5 +3,5 @@ tests/http-client.env.json
 **/.terraform/
 terraform.tfstate
 terraform.tfstate.backup
-adguard/local.tfvars
-adguard/.terraform.lock.hcl
+local.tfvars
+.terraform.lock.hcl

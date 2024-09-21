@@ -1,31 +1,31 @@
 ---
-- name: Security Setup
-  hosts: proxmox
-  gather_facts: false
-  vars_files:
-    - ~/repos/secrets/secrets.yml
-  vars:
-    - ansible_ssh_password: "{{ secret_temp_password }}"
-    - ansible_become_password: "{{ secret_temp_password }}"
-    - ansible_python_interpreter: "/usr/bin/python3"
-  roles:
-    - ssh-key
-    - security
+# - name: Security Setup
+#   hosts: proxmox
+#   gather_facts: false
+#   vars_files:
+#     - ~/repos/secrets/secrets.yml
+#   vars:
+#     - ansible_ssh_password: "{{ secret_temp_password }}"
+#     - ansible_become_password: "{{ secret_temp_password }}"
+#     - ansible_python_interpreter: "/usr/bin/python3"
+#   roles:
+#     - ssh-keys
+#     - security
 
-- name: Basic Setup
-  hosts: proxmox
-  gather_facts: false
-  vars_files:
-    - ~/repos/secrets/secrets.yml
-    - "{{ config_source }}/monitoring/vars.yml"
-  vars:
-    - ansible_python_interpreter: "/usr/bin/python3"
-    - system_timezone: "America/Indiana/Indianapolis"
-  roles:
-    - tailscale
-    - patch
-    - pre-reqs
-    - starship
+# - name: Basic Setup
+#   hosts: proxmox
+#   gather_facts: false
+#   vars_files:
+#     - ~/repos/secrets/secrets.yml
+#     - "{{ config_source }}/monitoring/vars.yml"
+#   vars:
+#     - ansible_python_interpreter: "/usr/bin/python3"
+#     - system_timezone: "America/Indiana/Indianapolis"
+#   roles:
+#     - tailscale
+#     - patch
+#     - pre-reqs
+#     - starship
 
 - name: Install Power Panel
   hosts: power_panel
@@ -42,5 +42,9 @@
   gather_facts: true
   vars_files:
     - ~/repos/secrets/secrets.yml
+  vars:
+    ct_list:
+      - "debian-12-standard_12.7-1_amd64.tar.zst"
+      - "ubuntu-22.04-standard_22.04-1_amd64.tar.zst"
   roles:
     - pve

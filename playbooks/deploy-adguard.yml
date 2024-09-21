@@ -5,7 +5,7 @@
   vars_files:
     - ~/repos/secrets/secrets.yml
   environment:
-    PM_USER: "{{ secret_pve_username }}@pam"
+    PM_USER: "{{ secret_pve_username }}"
     PM_PASS: "{{ secret_pve_password }}"
     AWS_ACCESS_KEY_ID: "{{ secret_tf_s3_key }}"
     AWS_SECRET_ACCESS_KEY: "{{ secret_tf_s3_secret }}"
@@ -19,12 +19,8 @@
   gather_facts: false
   vars_files:
     - ~/repos/secrets/secrets.yml
-  pre_tasks:
-    - name: Wait for LXCs to start
-      ansible.builtin.wait_for_connection:
-        delay: 5
-        timeout: 600
   roles:
+    - wait-for-host
     - ssh-keys
     - dns-cert
     - adguard
@@ -49,14 +45,8 @@
   gather_facts: false
   vars_files:
     - ~/repos/secrets/secrets.yml
-  vars:
-    golang_version: 1.23.1
-  pre_tasks:
-    - name: Wait for LXCs to start
-      ansible.builtin.wait_for_connection:
-        delay: 5
-        timeout: 600
   roles:
+    - wait-for-host
     - ssh-keys
     - dns-cert
     - adguard-sync

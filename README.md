@@ -1,5 +1,5 @@
 # Description
-This is the Ansible Playbooks for building/rebuilding/adding a node to my homelab. The new-host.yml playbook will patch all nodes to latest then install Docker, Tailscale, PowerPanel (On the node controlling the UPS), and Staship Shell. Any necessary pre-reqs will be installed either by the pre-reqs role or the role for the specific service.
+This is the Ansible Playbooks and Terraform files for building/rebuilding/adding a node to my homelab. The new-host.yml playbook will patch all nodes to latest then install Docker, Tailscale, PowerPanel (On the node controlling the UPS), and Staship Shell. Any necessary pre-reqs will be installed either by the pre-reqs role or the role for the specific service.
 
 ## Assumptions/Pre-reqs
 - A workstation with Ansible Engine installed and a basic understanding of using Ansible
@@ -9,7 +9,7 @@ This is the Ansible Playbooks for building/rebuilding/adding a node to my homela
     - All variables from the vault are prefixed with "secret_"
     - SSH Private Keys are stored with these secrets
 - There is a folder with configs for Adguard Home, Adguard Home Sync, and KeepaliveD Configs for each node. These can be stored in the secrets repo and encrypted with ansible-vault. It is up to you how to store them securely as they do contain sensetive data.
-- A router running pfsense/OPNsense with HAProxy and ACME plugins.
+- A firewall/router running pfsense/OPNsense with HAProxy and ACME plugins.
   - ACME generating a cert for dns subdomain
   - HAProxy Config and ACME Cert for pmx subdomain used for the proxmox API. I run my backend as a single active multiple backups with weighting as opposed to sticky. This worked better for console access to the VMs. I've never been able to get sticky working correctly for the console access.
 - A Tailscale subscription
@@ -26,7 +26,7 @@ Adguard Home is used for my local DNS and filtering. It is deployed in and Activ
 Adguard Home sync is installed as an LXC on node1 to sync the config to the other 3 LXCs.
 
 ## Omada Controller
-Omada controller is used for my Switches and WAPs. This urns on node 3. There is a bind mount for the automatic omada backups. Backups are encrypted.
+Omada controller is used for my Switches and WAPs. This runs on node2. It runs as a docker container in an LXC. I mainly did this because [Matt Bentley](https://github.com/mbentley/docker-omada-controller/) does a stellar job of maintaining a container for the software controller and TPLink does a garbage job of keeping up with updates to MongoDB. It's pretty trivial to stand up Docker and the container.
 
 ## Rclone
 Rclone is configured to copy encrypted backups from various container volumes and pfsense to GoogleDrive. This uses a GoogleDrive API service account to copy to GoogleDrive and SFTP connection to pull the files from pfsense.

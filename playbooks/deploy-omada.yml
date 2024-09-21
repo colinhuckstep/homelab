@@ -1,0 +1,20 @@
+---
+- name: Deploy Omada
+  hosts: omada
+  gather_facts: false
+  vars_files:
+    - ~/repos/secrets/secrets.yml
+  environment:
+    PM_USER: "{{ secret_pve_username }}"
+    PM_PASS: "{{ secret_pve_password }}"
+    AWS_ACCESS_KEY_ID: "{{ secret_tf_s3_key }}"
+    AWS_SECRET_ACCESS_KEY: "{{ secret_tf_s3_secret }}"
+    AWS_ENDPOINT_URL_S3: "{{ secret_tf_s3_endpoint }}"
+    TF_VAR_lxc_nameserver: "{{ secret_resolver_router }}"
+  roles:
+    - omada-lxc
+    - wait-for-host
+    - ssh-keys
+    - patch
+    - docker
+    - omada

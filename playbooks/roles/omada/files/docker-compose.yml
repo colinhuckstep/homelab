@@ -6,10 +6,8 @@ services:
     environment:
       - MANAGE_HTTP_PORT=8088
       - MANAGE_HTTPS_PORT=8043
-      - PGID=1000
       - PORTAL_HTTP_PORT=8088
       - PORTAL_HTTPS_PORT=8043
-      - PUID=1000
       - SHOW_SERVER_LOGS=true
       - SHOW_MONGODB_LOGS=false
       - TZ=America/Indiana/Indianapolis
@@ -17,4 +15,6 @@ services:
       - /container-vols/omada/data:/opt/tplink/EAPController/data
       - /container-vols/omada/backup:/opt/tplink/EAPController/data/autobackup
       - /container-vols/omada/logs:/opt/tplink/EAPController/logs
+      - /container-vols/certs/omada.huckstep.org.fullchain:/cert/tls.crt
+      - /container-vols/certs/omada.huckstep.org.key:/cert/tls.key
     network_mode: host
