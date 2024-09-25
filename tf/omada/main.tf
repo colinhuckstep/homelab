@@ -5,8 +5,8 @@ resource "proxmox_lxc" "omada" {
   ostemplate      = var.lxc_template
   password        = var.lxc_password
   unprivileged    = true
-  cores           = 2
-  memory          = 4096
+  cores           = 1
+  memory          = 3072
   nameserver      = var.lxc_nameserver
   ssh_public_keys = <<-EOT
       ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID6HDc+/KqF0d2+34ndpGLVXF1iVrMN+H+OnWCPGlBSi

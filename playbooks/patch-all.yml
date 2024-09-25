@@ -1,7 +1,18 @@
 ---
-- name: Patch All Hosts
-  hosts: all
-  serial: 1
+- name: Patch Group 1
+  hosts: patch_group_1
+  gather_facts: true
+  roles:
+    - patch
+
+- name: Patch Group 2
+  hosts: patch_group_2
+  gather_facts: true
+  roles:
+    - patch
+
+- name: Patch Group 3
+  hosts: patch_group_3
   gather_facts: true
   roles:
     - patch

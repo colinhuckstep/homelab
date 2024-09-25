@@ -17,4 +17,11 @@ services:
       - /container-vols/omada/logs:/opt/tplink/EAPController/logs
       - /container-vols/certs/omada.huckstep.org.fullchain:/cert/tls.crt
       - /container-vols/certs/omada.huckstep.org.key:/cert/tls.key
-    network_mode: host
+    # network_mode: host
+    ports:
+      - 80:8088
+      - 443:8043
+      - 8843:8843
+      - 27001:27001/udp
+      - 29810:29810/udp
+      - 29811-29816:29811-29816

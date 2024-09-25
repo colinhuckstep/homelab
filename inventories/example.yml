@@ -78,7 +78,7 @@ adguard_sync:
       ansible_user_home: /root
       pve_host: node1
 
-omada:
+omada_controller:
   hosts:
     omada:
       ansible_host: 172.16.0.8
@@ -89,3 +89,20 @@ omada:
       container_vols:
         - omada
         - certs
+
+patch_group_1:
+  hosts:
+    node3:
+    ag1:
+    agsync:
+    omada:
+
+patch_group_2:
+  hosts:
+    node2:
+    ag3:
+
+patch_group_3:
+  hosts:
+    node1:
+    ag2:

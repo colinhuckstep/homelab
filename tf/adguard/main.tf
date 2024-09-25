@@ -6,8 +6,8 @@ resource "proxmox_lxc" "adguard" {
   ostemplate      = var.lxc_template
   password        = var.lxc_password
   unprivileged    = true
-  cores           = 2
-  memory          = 2048
+  cores           = 1
+  memory          = 512
   nameserver      = var.lxc_nameserver
   ssh_public_keys = <<-EOT
       ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID6HDc+/KqF0d2+34ndpGLVXF1iVrMN+H+OnWCPGlBSi
@@ -45,7 +45,7 @@ resource "proxmox_lxc" "adguardSync" {
   password        = var.lxc_password
   unprivileged    = true
   cores           = 1
-  memory          = 512
+  memory          = 256
   nameserver      = var.lxc_nameserver
   ssh_public_keys = <<-EOT
       ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID6HDc+/KqF0d2+34ndpGLVXF1iVrMN+H+OnWCPGlBSi
