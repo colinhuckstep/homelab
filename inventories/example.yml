@@ -106,3 +106,18 @@ patch_group_3:
   hosts:
     node1:
     ag2:
+
+rclone_lxc:
+  hosts:
+    rclone:
+      ansible_host: 172.16.0.17
+      ansible_hostname: rclone
+      ansible_user: root
+      ansible_user_home: /root
+      pve_host: amy
+      backup_pfsense:
+        - router
+      backup_omada:
+        - omada
+      backup_adguard:
+        - ag1

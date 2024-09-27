@@ -4,7 +4,7 @@ Requires=backup-pfsense.service
 
 [Timer]
 Unit=backup-pfsense.service
-OnCalendar=*-*-* 02:00:00
+OnCalendar=*-*-* 02:10:00
 Persistent=true
 
 [Install]

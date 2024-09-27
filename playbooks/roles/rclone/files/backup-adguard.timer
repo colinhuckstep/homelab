@@ -1,9 +1,9 @@
 [Unit]
-Description=BackupContainerVols
-Requires=backup-vols.service
+Description=BackupAdguard
+Requires=backup-adguard.service
 
 [Timer]
-Unit=backup-vols.service
+Unit=backup-adguard.service
 OnCalendar=*-*-* 02:00:00
 Persistent=true
 

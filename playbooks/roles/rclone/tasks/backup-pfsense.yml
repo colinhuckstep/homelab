@@ -1,7 +1,7 @@
 - name: Copy pfsense Backup Script
   ansible.builtin.copy:
     src: backup-pfsense.sh
-    dest: /container-vols/backup/backup-pfsense.sh
+    dest: /backup/backup-pfsense.sh
     mode: "0770"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"

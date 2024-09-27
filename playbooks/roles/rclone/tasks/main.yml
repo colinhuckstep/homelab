@@ -8,7 +8,7 @@
 
 - name: Create Config Directory
   ansible.builtin.file:
-    path: /container-vols/backup
+    path: /backup
     state: directory
     mode: "0770"
     owner: "{{ ansible_user }}"
@@ -17,7 +17,7 @@
 - name: Copy GoogleDrive Creds
   ansible.builtin.copy:
     src: "{{ config_source }}/gdrive.json"
-    dest: /container-vols/backup/gdrive.json
+    dest: /backup/gdrive.json
     mode: "0770"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
@@ -25,13 +25,18 @@
 - name: Copy Rclone Config
   ansible.builtin.copy:
     src: "{{ config_source }}/rclone.conf"
-    dest: /container-vols/backup/rclone.conf
+    dest: /backup/rclone.conf
     mode: "0770"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
 
-- name: Backup Vols
-  ansible.builtin.include_tasks: backup-vols.yml
+- name: Backup Adguard
+  ansible.builtin.include_tasks: backup-adguard.yml
+  loop: "{{ hostvars[inventory_hostname]['backup_adguard'] }}"
+
+- name: Backup Omada
+  ansible.builtin.include_tasks: backup-omada.yml
+  loop: "{{ hostvars[inventory_hostname]['backup_omada'] }}"
 
 - name: Backup pfsense
   ansible.builtin.include_tasks: backup-pfsense.yml
