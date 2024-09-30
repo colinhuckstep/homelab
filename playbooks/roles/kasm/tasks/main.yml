@@ -1,0 +1,2 @@
+- name: Deploy KASM Server
+  ansible.builtin.include_tasks: server.yml

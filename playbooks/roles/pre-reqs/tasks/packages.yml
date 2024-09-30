@@ -9,4 +9,5 @@
       - python3-venv
       - python3-virtualenv
       - jq
+      - sudo
     update_cache: true

@@ -31,9 +31,5 @@ Omada controller is used for my Switches and WAPs. This runs on node2. It runs a
 ## Rclone
 Rclone is configured to copy encrypted backups from various container volumes and pfsense to GoogleDrive. This uses a GoogleDrive API service account to copy to GoogleDrive and SFTP connection to pull the files from pfsense.
 
-## Archived Playbooks/Roles
-
-I've stopped using Portainer and ControlD. Playbooks and Roles are in the archived folders for historical reference
-
-## Next Steps
-Prometheus and Grafana probably cloud, maybe not.
+# Kasm
+A Kasm Workspaces LXC is created to provide Remote Access to Apps. It is exposed via HA Proxy and Cloudflare.

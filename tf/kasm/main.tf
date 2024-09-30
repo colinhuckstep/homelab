@@ -1,12 +1,13 @@
-resource "proxmox_lxc" "omada" {
+resource "proxmox_lxc" "kasm" {
   target_node     = var.pve_node
   hostname        = var.lxc_hostname
-  vmid            = 8
+  vmid            = 318
   ostemplate      = var.lxc_template
   password        = var.lxc_password
-  unprivileged    = true
-  cores           = 1
-  memory          = 3072
+  unprivileged    = false
+  cores           = 3
+  memory          = 12288
+  swap            = 1024
   nameserver      = var.lxc_nameserver
   ssh_public_keys = <<-EOT
       ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID6HDc+/KqF0d2+34ndpGLVXF1iVrMN+H+OnWCPGlBSi
@@ -22,11 +23,12 @@ resource "proxmox_lxc" "omada" {
   onboot          = true
   rootfs {
     storage       = "local-lvm"
-    size          = "10G"
+    size          = "150G"
   }
   features {
     nesting = true
-    keyctl = true
+    keyctl  = true
+    fuse    = true
   }
   network {
     name          = "eth0"

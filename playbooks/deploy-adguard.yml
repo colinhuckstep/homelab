@@ -12,7 +12,7 @@
     AWS_ENDPOINT_URL_S3: "{{ secret_tf_s3_endpoint }}"
     TF_VAR_lxc_nameserver: "{{ secret_resolver_router }}"
   roles:
-    - adguard-lxc
+    - lxc/adguard
 
 - name: Install Adguard
   hosts: adguard

@@ -1,0 +1,14 @@
+- name: Create LXCs
+  delegate_to: localhost
+  community.general.terraform:
+    state: present
+    project_path: ~/repos/homelab/tf/kasm
+    complex_vars: true
+    force_init: true
+    variables:
+      pve_api_host: "https://pmx.{{ secret_base_domain }}/api2/json"
+      lxc_password: "{{ secret_lxc_password }}"
+      lxc_gw: "{{ secret_resolver_router }}"
+      pve_node: "{{ hostvars[inventory_hostname]['pve_host'] }}"
+      lxc_ip: "{{ ansible_host }}/24"
+      lxc_template: "local:vztmpl/debian-12-standard_12.7-1_amd64.tar.zst"

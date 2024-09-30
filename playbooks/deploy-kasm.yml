@@ -1,6 +1,6 @@
 ---
-- name: Deploy Rclone
-  hosts: rclone_lxc
+- name: Deploy KASM LXCs
+  hosts: kasm_server
   gather_facts: false
   vars_files:
     - ~/repos/secrets/secrets.yml
@@ -12,8 +12,10 @@
     AWS_ENDPOINT_URL_S3: "{{ secret_tf_s3_endpoint }}"
     TF_VAR_lxc_nameserver: "{{ secret_resolver_router }}"
   roles:
-    - lxc/rclone
+    - lxc/kasm
     - wait-for-host
     - ssh-keys
     - patch
-    - rclone
+    - pre-reqs
+    - docker
+    - kasm

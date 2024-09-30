@@ -1,9 +1,0 @@
-- name: Apply Config
-  ansible.builtin.uri:
-    url: "https://portainer.{{ secret_base_domain }}/api/settings"
-    headers:
-      Authorization: "Bearer {{ portainer_auth_token['json']['jwt'] }}"
-    body_format: json
-    body: "{{ lookup('ansible.builtin.file', '{{ config_source }}/portainer/config.json') }}"
-    method: "PUT"
-  register: config_set

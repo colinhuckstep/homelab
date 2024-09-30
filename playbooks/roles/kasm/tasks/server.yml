@@ -1,0 +1,24 @@
+- name: Get KASM Installer Page
+  ansible.builtin.shell:
+    wget -O - https://kasmweb.com/docs/latest/install/single_server_install.html | grep "https://kasm-static-content.s3.amazonaws.com/kasm_release_1" | head -1
+  register: kasm_release
+
+- name: Download KASM Installer
+  ansible.builtin.get_url:
+    url: "{{ kasm_release.stdout_lines[0] | regex_search(qry) }}"
+    dest: /tmp/kasm_release.tar.gz
+    mode: "0644"
+  vars:
+    qry: "https://.*gz"
+
+- name: Expand KASM Installer
+  ansible.builtin.unarchive:
+    src: "/tmp/kasm_release.tar.gz"
+    remote_src: true
+    dest: "/tmp"
+    mode: "0755"
+
+- name: Install KASM
+  ansible.builtin.command:
+    cmd: "/tmp/kasm_release/install.sh -e -H --skip-egress -V {{ secret_kasm_admin_password}}"
+    creates: /opt/kasm/bin
