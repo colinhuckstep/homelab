@@ -1,0 +1,4 @@
+- name: Wait for Host to start
+  ansible.builtin.wait_for_connection:
+    delay: 5
+    timeout: 600

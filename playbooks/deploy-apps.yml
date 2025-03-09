@@ -1,0 +1,8 @@
+---
+- name: Deploy Apps
+  hosts: k3s_primary
+  gather_facts: false
+  tasks:
+    - name: Include argo-cd Role
+      ansible.builtin.include_role:
+        name: argo-cd

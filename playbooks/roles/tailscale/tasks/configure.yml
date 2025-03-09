@@ -1,0 +1,32 @@
+- name: Configure Tailscale # noqa no-handler
+  become: true
+  block:
+    - name: Enable Tailscale # noqa no-changed-when
+      no_log: true
+      ansible.builtin.shell: |
+        tailscale up \
+        --accept-routes=false \
+        --accept-dns=false \
+        --advertise-exit-node \
+        --reset \
+        --advertise-routes {{ tailscale_routes }} \
+        --auth-key {{ secrets.tailscale.auth_key }}
+    - name: Create Tailscale Network Policy File
+      ansible.builtin.file:
+        path: /etc/sysctl.d/99-tailscale.conf
+        state: touch
+        mode: "0644"
+    - name: Enable Tailscale IPv4 Routing
+      ansible.posix.sysctl:
+        name: net.ipv4.ip_forward
+        value: '1'
+        state: present
+        sysctl_file: /etc/sysctl.d/99-tailscale.conf
+        reload: true
+    - name: Enable Tailscale IPv6 Routing
+      ansible.posix.sysctl:
+        name: net.ipv6.conf.all.forwarding
+        value: '1'
+        state: present
+        sysctl_file: /etc/sysctl.d/99-tailscale.conf
+        reload: true

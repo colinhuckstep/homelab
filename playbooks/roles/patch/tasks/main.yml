@@ -1,0 +1,46 @@
+---
+- name: Package management tasks
+  become: true
+  block:
+    - name: Update package cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+      register: apt_update
+      retries: 3
+      delay: 10
+      until: apt_update is success
+
+    - name: Check for upgradable packages
+      ansible.builtin.apt:
+        update_cache: true
+      check_mode: true
+      register: upgradable_packages
+
+    - name: Patch All Packages # noqa no-handler
+      ansible.builtin.apt:
+        upgrade: dist
+        update_cache: true
+      when: upgradable_packages.changed
+      register: patch_result
+
+    - name: Clean up unused packages
+      ansible.builtin.apt:
+        autoremove: true
+        autoclean: true
+      register: apt_clean
+      retries: 2
+      delay: 5
+      until: apt_clean is success
+
+    - name: Check if reboot required
+      ansible.builtin.stat:
+        path: /var/run/reboot-required
+      register: reboot_required
+
+    - name: Reboot if required
+      ansible.builtin.reboot:
+        msg: "Rebooting due to package updates"
+        reboot_timeout: 600
+        test_command: uptime
+      when: reboot_required.stat.exists

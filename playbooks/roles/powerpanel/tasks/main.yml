@@ -1,0 +1,24 @@
+- name: Install Power Panel
+  become: true
+  block:
+    - name: Download PowerPanel
+      ansible.builtin.get_url:
+        url: "https://dl4jz3rbrsfum.cloudfront.net/software/PPL_64bit_v{{ powerpanel_version }}.deb"
+        dest: /tmp/PPL.deb
+        mode: "0644"
+      when: inventory_hostname in groups['powerpanel']
+    - name: Install PowerPanel
+      ansible.builtin.apt:
+        deb: /tmp/PPL.deb
+      notify: Reboot
+      when: inventory_hostname in groups['powerpanel']
+    - name: Cleanup Installer
+      ansible.builtin.file:
+        path: /tmp/PPL.deb
+        state: absent
+      when: inventory_hostname in groups['powerpanel']
+    - name: Cloud Config # noqa no-changed-when
+      no_log: true
+      ansible.builtin.command:
+        cmd: "pwrstat -cloud -active on -account {{ secrets.powerpanel.user }} -password {{ secrets.powerpanel.pass }}"
+      when: inventory_hostname in groups['powerpanel']

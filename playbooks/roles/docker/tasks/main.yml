@@ -1,0 +1,114 @@
+---
+- name: Install Docker on Ubuntu
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "24.04"
+  block:
+    - name: Update APT package index
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install required packages for Docker
+      ansible.builtin.apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+        state: present
+
+    - name: Add Docker GPG key
+      ansible.builtin.apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker repository
+      ansible.builtin.apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        state: present
+
+    - name: Install Docker Engine
+      ansible.builtin.apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+        update_cache: true
+
+    - name: Ensure Docker service is running
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true
+
+- name: Add interactive_username and username to docker group (all distributions)
+  ansible.builtin.user:
+    name: "{{ item }}"
+    groups: docker
+    append: true
+  loop:
+    - "{{ secrets.interactive_username }}"
+    - "{{ secrets.username }}"
+
+- name: Refresh docker group membership for the ansible user
+  ansible.builtin.shell: "sg docker -c 'id -nG'"
+  become: false
+  ignore_errors: true
+
+- name: Login to Portainer API to obtain JWT token
+  ansible.builtin.uri:
+    url: "{{ secrets.portainer.api_url }}/auth"
+    method: POST
+    body_format: json
+    body:
+      username: "{{ secrets.portainer.user }}"
+      password: "{{ secrets.portainer.password }}"
+    status_code: 200
+    return_content: true
+  register: portainer_auth
+
+- name: Get Portainer version from API
+  ansible.builtin.uri:
+    url: "{{ secrets.portainer.api_url }}/system/version"
+    method: GET
+    status_code: 200
+    return_content: true
+    headers:
+      Authorization: "Bearer {{ portainer_auth.json.jwt }}"
+  register: portainer_status
+
+- name: Set Portainer agent version from API result
+  ansible.builtin.set_fact:
+    portainer_agent_version: "{{ portainer_status.json.ServerVersion }}"
+
+- name: Deploy Portainer Agent container
+  community.docker.docker_container:
+    name: portainer_agent
+    image: "portainer/agent:{{ portainer_agent_version }}"
+    state: started
+    restart_policy: always
+    published_ports:
+      - "9001:9001"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+      - /:/host
+
+- name: Add server endpoint to Portainer via API
+  ansible.builtin.uri:
+    url: "{{ secrets.portainer.api_url }}/endpoints"
+    method: POST
+    headers:
+      Authorization: "Bearer {{ portainer_auth.json.jwt }}"
+    body_format: form-multipart
+    body:
+      Name: "{{ ansible_hostname }}"
+      URL: "tcp://{{ ansible_host }}:9001"
+      EndpointCreationType: "2"
+      GroupId: "1"
+      TLS: "true"
+      TLSSkipVerify: "true"
+      TLSSkipClientVerify: "true"
+    status_code:
+      - 200
+      - 409

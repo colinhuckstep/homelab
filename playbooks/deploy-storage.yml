@@ -1,0 +1,9 @@
+---
+- name: Deploy Storage
+  hosts: servers
+  gather_facts: false
+  tasks:
+    - name: Include Storage Role
+      ansible.builtin.include_role:
+        name: secondary-storage
+      when: inventory_hostname in groups['secondary_storage_nodes']

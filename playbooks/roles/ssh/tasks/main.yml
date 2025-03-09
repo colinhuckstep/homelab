@@ -1,0 +1,54 @@
+- name: Create SSH Directory
+  become: true
+  ansible.builtin.file:
+    path: "{{ ansible_user_home }}/.ssh"
+    state: directory
+    mode: "0700"
+    owner: "{{ secrets.username }}"
+
+- name: Copy SSH Private Keys
+  become: true
+  ansible.builtin.copy:
+    content: "{{ secrets.ssh_key }}"
+    dest: "{{ ansible_user_home }}/.ssh/id_ed25519"
+    mode: "0600"
+    owner: "{{ secrets.username }}"
+
+- name: Set authorized keys taken from url
+  become: true
+  ansible.posix.authorized_key:
+    user: "{{ secrets.username }}"
+    state: present
+    key: "https://github.com/{{ secrets.git.gh_user }}.keys"
+
+- name: Create Interactive User SSH Directory
+  become: true
+  ansible.builtin.file:
+    path: "/home/{{ secrets.interactive_username }}/.ssh"
+    state: directory
+    mode: "0700"
+    owner: "{{ secrets.interactive_username }}"
+
+- name: Copy SSH Private Keys
+  become: true
+  ansible.builtin.copy:
+    content: "{{ secrets.ssh_key }}"
+    dest: "/home/{{ secrets.interactive_username }}/.ssh/id_ed25519"
+    mode: "0600"
+    owner: "{{ secrets.interactive_username }}"
+
+- name: Set authorized keys taken from url
+  become: true
+  ansible.posix.authorized_key:
+    user: "{{ secrets.interactive_username }}"
+    state: present
+    key: "https://github.com/{{ secrets.git.gh_user }}.keys"
+
+
+- name: Set SSH to Key Only
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    search_string: "#PasswordAuthentication yes"
+    line: "PasswordAuthentication no"
+  notify: 'Restart SSHD'

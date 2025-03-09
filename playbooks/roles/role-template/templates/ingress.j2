@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ app_name }}-http-ingress
+  namespace: {{ app_namespace }}
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ ingress_service }}
+            port:
+              name: https
+    host: {{ cert_name }}
+  tls:
+  - hosts:
+    - {{ cert_name }}
+    secretName: {{ secret_name }}

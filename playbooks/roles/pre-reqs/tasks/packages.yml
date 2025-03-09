@@ -1,0 +1,17 @@
+- name: Install Package Prereqs
+  become: true
+  ansible.builtin.apt:
+    name:
+      - curl
+      - wget
+      - nano
+      - git
+      - python3-full
+      - python3-pip
+      - python3-venv
+      - python3-virtualenv
+      - jq
+      - acl
+      - util-linux
+      - cryptsetup
+    update_cache: true

@@ -1,0 +1,42 @@
+- name: Setup Environment
+  become: true
+  block:
+    - name: Configure Git User
+      community.general.git_config:
+        name: user.name
+        scope: system
+        value: "{{ secrets.git.username }}"
+
+    - name: Configure Git User
+      community.general.git_config:
+        name: user.email
+        scope: system
+        value: "{{ secrets.email }}"
+
+    - name: Create 'default' venv folder
+      ansible.builtin.file:
+        path: /venvs/default
+        state: directory
+        mode: "0777"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+
+    - name: Install Python Prereqs
+      ansible.builtin.pip:
+        name:
+          - github3.py
+          - PyYAML
+          - jmespath
+          - ansible-lint
+          - python-debian
+        virtualenv: /venvs/default
+        virtualenv_site_packages: true
+
+    - name: "Add VENV to .bashrc - {{ item }}"
+      ansible.builtin.lineinfile:
+        path: "/home/{{ item }}/.bashrc"
+        line: 'test -z "$VIRTUAL_ENV" && source /venvs/default/bin/activate'
+        state: present
+      loop:
+        - "{{ secrets.interactive_username }}"
+        - "{{ ansible_user }}"

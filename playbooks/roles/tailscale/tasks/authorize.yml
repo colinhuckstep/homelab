@@ -1,0 +1,43 @@
+- name: Get Tailnet Devices
+  no_log: true
+  ansible.builtin.uri:
+    url: "https://api.tailscale.com/api/v2/tailnet/{{ secrets.tailscale.tailnet_id }}/devices"
+    method: GET
+    headers:
+      Authorization: "Bearer {{ secrets.tailscale.api_key }}"
+  register: tailscale_devices
+
+- ansible.builtin.debug:
+    msg: "{{ item['hostname'] }}"
+  when: item['hostname'] == inventory_hostname
+  loop: "{{ tailscale_devices.json['devices'] }}"
+
+- name: Set Tailscale Device ID
+  ansible.builtin.set_fact:
+    tailscale_device_id: "{{ item['nodeId'] }}"
+  when: item['hostname'] == inventory_hostname
+  loop: "{{ tailscale_devices.json['devices'] }}"
+
+- name: Set Tailscale Routes
+  # no_log: true
+  ansible.builtin.uri:
+    url: "https://api.tailscale.com/api/v2/device/{{ tailscale_device_id }}/routes"
+    method: POST
+    headers:
+      Authorization: "Bearer {{ secrets.tailscale.api_key }}"
+      Content-Type: "application/json"
+    body_format: "json"
+    body:
+      routes: "{{ tailscale_routes.split(',') + ['0.0.0.0/0', '::/0'] }}"
+
+- name: Disable Key Expiration
+  no_log: true
+  ansible.builtin.uri:
+    url: "https://api.tailscale.com/api/v2/device/{{ tailscale_device_id }}/key"
+    method: POST
+    headers:
+      Authorization: "Bearer {{ secrets.tailscale.api_key }}"
+      Content-Type: "application/json"
+    body_format: "json"
+    body:
+      keyExpiryDisabled: true

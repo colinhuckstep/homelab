@@ -1,0 +1,15 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ cert_name }}
+  namespace: {{ app_namespace }}
+spec:
+  # Secret names are always required.
+  secretName: {{ secret_name }}
+  # At least one of a DNS Name, URI, or IP address is required.
+  dnsNames:
+  - {{ cert_name }}
+  issuerRef:
+    kind: ClusterIssuer
+    name: {{ cluster_issuer }}

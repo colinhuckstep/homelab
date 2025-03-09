@@ -1,0 +1,2 @@
+playbooks/roles/get-secrets/tasks/main.yml
+inventories/hosts.yml

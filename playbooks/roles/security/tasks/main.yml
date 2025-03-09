@@ -1,0 +1,64 @@
+- name: Get Sudo Password
+  ansible.builtin.set_fact:
+    ansible_become_password: "{{ secrets.temp_password }}"
+  no_log: true
+
+- name: Test Sudo Access
+  become: true
+  ansible.builtin.command:
+    cmd: id -u
+  register: su_test
+  ignore_errors: true
+
+- name: Change to New Password if Sudo Test fails
+  ansible.builtin.set_fact:
+    ansible_become_password: "{{ secrets.new_password }}"
+  no_log: true
+  when: su_test.failed
+
+- name: Test Sudo Access
+  become: true
+  ansible.builtin.command:
+    cmd: id -u
+  when: su_test.failed
+
+- name: Create Ansible User
+  become: true
+  ansible.builtin.user:
+    name: "{{ secrets.username }}"
+    home: "{{ ansible_user_home }}"
+    shell: /bin/bash
+    state: present
+    password: "{{ secrets.new_password | password_hash('sha512') }}"
+
+- name: Add Ansible User to Sudoers
+  become: true
+  ansible.builtin.lineinfile:
+    path: "/etc/sudoers.d/{{ secrets.username }}"
+    line: "{{ secrets.username }} ALL=(ALL) NOPASSWD:ALL"
+    state: present
+    create: true
+
+- name: Change Interactive User Password
+  become: true
+  ansible.builtin.user:
+    name: "{{ secrets.interactive_username }}"
+    password: "{{ secrets.new_password | password_hash('sha512') }}"
+
+- name: Add Interactive User to Sudoers
+  become: true
+  ansible.builtin.lineinfile:
+    path: "/etc/sudoers.d/{{ secrets.interactive_username }}"
+    line: "{{ secrets.interactive_username }} ALL=(ALL) NOPASSWD:ALL"
+    state: present
+    create: true
+
+- name: Setup SSH
+  ansible.builtin.include_role:
+    name: ssh
+
+- name: Change root Password
+  become: true
+  ansible.builtin.user:
+    name: root
+    password: "{{ secrets.root_password | password_hash('sha512') }}"

@@ -1,0 +1,23 @@
+- name: Remove Tailscale Device
+  block:
+    - name: Get Tailnet Devices
+      ansible.builtin.uri:
+        url: "https://api.tailscale.com/api/v2/tailnet/{{ secret_tailscale_tailnet_id }}/devices"
+        method: GET
+        headers:
+          Authorization: "Bearer {{ secrets.tailscale.api_key }}"
+      register: tailscale_devices
+
+    - name: Set Tailscale Device ID
+      ansible.builtin.set_fact:
+        tailscale_device_id: "{{ item['nodeId'] }}"
+      when: item['hostname'] == inventory_hostname
+      loop: "{{ tailscale_devices.json['devices'] }}"
+
+    - name: Remove Tailscale Device
+      when: tailscale_device_id is defined
+      ansible.builtin.uri:
+        url: "https://api.tailscale.com/api/v2/device/{{ tailscale_device_id }}"
+        method: DELETE
+        headers:
+          Authorization: "Bearer {{ secrets.tailscale.api_key }}"

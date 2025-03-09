@@ -1,0 +1,73 @@
+- name: Set Facts
+  ansible.builtin.set_fact:
+    cluster_issuer: letsencrypt # remove -stage after testing is complete
+    app_name: ""
+    secret_name: ""
+    app_namespace: ""
+    chart_ref: ""
+    repo_url: ""
+    cert_name: ""
+
+- name: "Add namespace - {{ app_namespace }}"
+  kubernetes.core.k8s:
+    state: present
+    name: "{{ app_namespace }}"
+    kind: Namespace
+
+- name: Issue Certificate
+  block:
+    - name: Copy Template
+      ansible.builtin.template:
+        src: cert.j2
+        dest: "~/{{ app_name }}-cert.yml"
+        mode: "0644"
+    - name: Issue Cert
+      kubernetes.core.k8s:
+        state: present
+        src: "~/{{ app_name }}-cert.yml"
+        namespace: "{{ app_namespace }}"
+        apply: true
+    - name: Cleanup Template
+      ansible.builtin.file:
+        path: "~/{{ app_name }}-cert.yml"
+        state: absent
+
+- name: "Add Repo - {{ app_name }}"
+  kubernetes.core.helm_repository:
+    name: "{{ app_name }}"
+    repo_url: "{{ repo_url }}"
+    state: present
+
+- name: "Install - {{ app_name }}"
+  kubernetes.core.helm:
+    name: "{{ app_name }}"
+    chart_ref: "{{ chart_ref }}"
+    release_namespace: "{{ app_namespace }}"
+    create_namespace: true
+    update_repo_cache: true
+    force: true
+    values:
+      extraArgs:
+        default-ssl-certificate: "{{ app_namespace }}/{{ cert_name }}"
+
+- name: "Configure Ingress - {{ app_name }}"
+  block:
+    - name: Copy Template
+      ansible.builtin.template:
+        src: ingress.j2
+        dest: "~/{{ app_name }}-ingress.yml"
+        mode: "0644"
+    - name: Apply Template
+      kubernetes.core.k8s:
+        state: present
+        src: "~/{{ app_name }}-ingress.yml"
+        namespace: "{{ app_namespace }}"
+        apply: true
+    - name: Cleanup Template
+      ansible.builtin.file:
+        path: "~/{{ app_name }}-ingress.yml"
+        state: absent
+
+# - name: "Wait for serviceo be ready - {{ app_name }}"
+#   ansible.builtin.shell: |
+#     kubectl wait -n "{{ app_namespace }}" --for=condition=Available deployment/nginx-ingress-nginx-controller

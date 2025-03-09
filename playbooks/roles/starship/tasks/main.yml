@@ -1,0 +1,19 @@
+- name: Get Starship Install
+  ansible.builtin.get_url:
+    url: https://starship.rs/install.sh
+    dest: /tmp/starship.sh
+    mode: "0777"
+- name: Install Starship
+  become: true
+  ansible.builtin.command:
+    cmd: /tmp/starship.sh -f
+    creates: /usr/local/bin/starship
+- name: Enable Starship
+  become: true
+  ansible.builtin.lineinfile:
+    line: "eval \"$(starship init bash)\""
+    path: "/home/{{ secrets.interactive_username }}/.bashrc"
+- name: Cleanup Installer
+  ansible.builtin.file:
+    path: /tmp/starship.sh
+    state: absent

@@ -1,0 +1,13 @@
+# Turn this into a main.yml file and configure to use your secrets manager
+- name: Get Secrets
+  no_log: true
+  block:
+  - name: Get Secrets
+    ansible.builtin.set_fact:
+      secrets:
+        username: "lookup from your secrets manager of choice"
+        interactive_username: "lookup from your secrets manager of choice"
+        email: "lookup from your secrets manager of choice"
+        ssh_key: "lookup from your secrets manager of choice"
+        temp_password: "lookup from your secrets manager of choice"
+        new_password: "lookup from your secrets manager of choice"

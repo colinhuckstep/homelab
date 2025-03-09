@@ -1,0 +1,19 @@
+servers:
+  hosts:
+    node1:
+      ansible_host: 172.16.0.3
+      ansible_hostname: node1
+      local_user: user
+      ansible_user: ansible
+      ansible_user_home: "/home/ansible"
+      ansible_python_interpreter: "/venvs/default/bin/python"
+      arch: amd64
+
+powerpanel:
+  hosts:
+    node1:
+
+secondary_storage_nodes:
+  hosts:
+    node1:
+      nfs_allowed: 172.16.0.0/24

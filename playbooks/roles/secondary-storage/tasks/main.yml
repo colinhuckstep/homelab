@@ -1,0 +1,86 @@
+---
+- name: Prepare secondary storage
+  become: true
+  block:
+    - name: Install parted
+      ansible.builtin.apt:
+        name: parted
+        state: present
+        update_cache: true
+
+    - name: Create secondary storage mount directory
+      ansible.builtin.file:
+        path: /mnt/secondary-storage
+        state: directory
+        mode: '0755'
+
+    - name: Check partition filesystem type
+      ansible.builtin.command: "blkid -o value -s TYPE {{ secondary_device }}1"
+      register: fs_check
+      failed_when: false
+      changed_when: false
+
+    - name: Remove existing partition if not ext4
+      community.general.parted:
+        device: "{{ secondary_device }}"
+        number: 1
+        state: absent
+      when: fs_check.rc == 0 and fs_check.stdout != "ext4"
+
+    - name: Create partition on device
+      community.general.parted:
+        device: "{{ secondary_device }}"
+        number: 1
+        state: present
+        part_end: "100%"
+        part_start: "0%"
+        fs_type: ext4
+      when: fs_check.rc != 0 or fs_check.stdout != "ext4"
+
+    - name: Create ext4 filesystem
+      community.general.filesystem:
+        fstype: ext4
+        dev: "{{ secondary_device }}1"
+        force: true
+      when: fs_check.rc != 0 or fs_check.stdout != "ext4"
+
+    - name: Mount secondary drive
+      ansible.posix.mount:
+        path: /mnt/secondary-storage
+        src: "{{ secondary_device }}1"
+        fstype: ext4
+        state: mounted
+        opts: defaults
+        dump: 0
+        passno: 2
+
+    - name: Install NFS server
+      ansible.builtin.apt:
+        name:
+          - nfs-kernel-server
+          - nfs-common
+        state: present
+        update_cache: true
+
+    - name: Set NFS-compatible permissions
+      ansible.builtin.file:
+        path: /mnt/secondary-storage
+        state: directory
+        owner: nobody
+        group: nogroup
+        mode: '0777'
+
+    - name: Configure NFS exports
+      ansible.builtin.lineinfile:
+        path: /etc/exports
+        line: "/mnt/secondary-storage {{nfs_allowed}}(rw,sync,no_subtree_check,no_root_squash)"
+
+    - name: Export NFS filesystem
+      ansible.builtin.command: exportfs -ra
+      changed_when: true
+
+    - name: Enable and start NFS server
+      ansible.builtin.service:
+        name: nfs-kernel-server
+        state: started
+        enabled: true

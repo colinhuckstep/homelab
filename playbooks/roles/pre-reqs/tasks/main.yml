@@ -1,0 +1,5 @@
+- name: Install Packages
+  ansible.builtin.include_tasks: packages.yml
+
+- name: Setup Environment
+  ansible.builtin.include_tasks: environment.yml
